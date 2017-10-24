@@ -1,0 +1,14 @@
+require 'rails_helper'
+RSpec.describe QuestionsCreator do
+  let(:params) { attributes_for(:question) }
+  let(:questions_creator) { QuestionsCreator.new params }
+  let(:question) { instance_double(Question, as_json: params, **params) }
+
+  subject { questions_creator }
+
+  describe '#create' do
+    before { expect(Question).to receive(:create!).with(params).and_return(question) }
+
+    its(:create) { is_expected.to eq question }
+  end
+end
