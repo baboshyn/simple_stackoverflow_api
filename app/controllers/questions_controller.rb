@@ -1,7 +1,7 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
 
-  def create    
+  def create
     question = QuestionsCreator.new(resource_params).create
 
     render json: question, status: 201

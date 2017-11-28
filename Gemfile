@@ -11,6 +11,7 @@ gem 'rails'
 gem 'pg'
 gem 'puma'
 gem 'active_model_serializers'
+gem 'bcrypt'
 
 group :development, :test do
   gem 'rspec-rails'
