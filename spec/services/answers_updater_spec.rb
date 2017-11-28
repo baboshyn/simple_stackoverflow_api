@@ -7,7 +7,7 @@ RSpec.describe AnswersUpdater do
   subject { answers_updater }
 
   describe '#update' do
-    before { expect(answer).to receive(:update!).with(params).and_return(answer) }
+    before { allow(answer).to receive(:update!).with(params).and_return(answer) }
 
     its(:update) { is_expected.to eq answer }
   end

@@ -7,7 +7,7 @@ RSpec.describe AnswersCreator do
   subject { answers_creator }
 
   describe '#create' do
-    before { expect(Answer).to receive(:create!).with(params).and_return(answer) }
+    before { allow(Answer).to receive(:create!).with(params).and_return(answer) }
 
     its(:create) { is_expected.to eq answer }
   end
