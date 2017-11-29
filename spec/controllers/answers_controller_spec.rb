@@ -14,11 +14,29 @@ RSpec.describe AnswersController, type: :controller do
       end
     end
 
-    before { process :create, method: :post, params: { answer: resource_params }, format: :json }
+    context '#parameters for qanswer passed validation'do
+      before { expect(answer).to receive(:valid?).and_return(true) }
 
-    it { expect(response.body).to eq answer.to_json }
+      before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
-    it { expect(response).to have_http_status 201 }
+      it { expect(response.body).to eq answer.to_json }
+
+      it { expect(response).to have_http_status 201 }
+    end
+
+    context '#parameters for answer did not pass validation'do
+      let(:errors) { instance_double(ActiveModel::Errors) }
+
+      before { expect(answer).to receive(:valid?).and_return(false) }
+
+      before { expect(answer).to receive(:errors).and_return(errors) }
+
+      before { process :create, method: :post, params: { answer: resource_params }, format: :json }
+
+      it { expect(response.body).to eq errors.to_json }
+
+      it { expect(response).to have_http_status 422 }
+    end
   end
 
   describe '#show' do
@@ -43,11 +61,29 @@ RSpec.describe AnswersController, type: :controller do
       end
     end
 
-    before { process :update, method: :patch, params: { id: answer.id, answer: resource_params }, format: :json }
+    context '#parameters for answer passed validation'do
+      before { expect(answer).to receive(:valid?).and_return(true) }
 
-    it { expect(response.body).to eq answer.to_json }
+      before { process :update, method: :patch, params: { id: answer.id, answer: resource_params }, format: :json }
 
-    it { expect(response).to have_http_status 200 }
+      it { expect(response.body).to eq answer.to_json }
+
+      it { expect(response).to have_http_status 200 }
+    end
+
+    context '#parameters for answer did not pass validation'do
+      let(:errors) { instance_double(ActiveModel::Errors) }
+
+      before { expect(answer).to receive(:valid?).and_return(false) }
+
+      before { expect(answer).to receive(:errors).and_return(errors) }
+
+      before { process :update, method: :patch, params: { id: answer.id, answer: resource_params }, format: :json }
+
+      it { expect(response.body).to eq errors.to_json }
+
+      it { expect(response).to have_http_status 422 }
+    end
   end
 
   describe '#index' do

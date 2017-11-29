@@ -5,5 +5,8 @@ class AnswersCreator
 
   def create
     Answer.create!(@params)
+
+    rescue ActiveRecord::RecordInvalid => invalid
+    invalid
   end
 end

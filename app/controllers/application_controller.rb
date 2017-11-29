@@ -3,9 +3,4 @@ class ApplicationController < ActionController::API
 
     render json: exception
   end
-
-  rescue_from ActiveRecord::RecordInvalid, ActiveModel::StrictValidationFailed do |error|
-
-    render json: error, status: 422
-  end
 end

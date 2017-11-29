@@ -2,7 +2,11 @@ class UsersController < ApplicationController
   def create
     user = UserCreator.new(resource_params).create
 
-    render json: user, status: 201
+    if user.valid?
+      render json: user, status: 201
+    else
+      render json: user.errors, status: 422
+    end
   end
 
   private

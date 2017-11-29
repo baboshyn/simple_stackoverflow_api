@@ -9,5 +9,8 @@ class QuestionsUpdater
     @question.update!(@params)
 
     @question
+
+    rescue ActiveRecord::RecordInvalid => invalid
+    invalid.record
   end
 end

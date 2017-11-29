@@ -1,13 +1,12 @@
-class QuestionsCreator
-
+class UsersCreator
   def initialize(params = {})
     @params = params
   end
 
   def create
-    Question.create!(@params)
+    User.create!(@params)
 
     rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+    invalid
   end
 end
