@@ -106,7 +106,7 @@ RSpec.describe QuestionsController, type: :controller do
 
 
   describe '#destroy' do
-    before { expect(Question).to receive(:find).with('1').and_return(question) }
+    before { allow(Question).to receive(:find).with('1').and_return(question) }
 
     before do
       expect(QuestionsDestroyer).to receive(:new).with(question) do
