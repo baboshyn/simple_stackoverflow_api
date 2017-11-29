@@ -10,12 +10,12 @@ RSpec.describe AnswersController, type: :controller do
 
     before do
       expect(AnswersCreator).to receive(:new).with(permit!(resource_params)) do
-        double.tap { |answers_creator| expect(answers_creator).to receive(:create).and_return(answer) }
+        double.tap { |answers_creator| allow(answers_creator).to receive(:create).and_return(answer) }
       end
     end
 
     context '#parameters for qanswer passed validation'do
-      before { expect(answer).to receive(:valid?).and_return(true) }
+      before { allow(answer).to receive(:valid?).and_return(true) }
 
       before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
@@ -27,9 +27,9 @@ RSpec.describe AnswersController, type: :controller do
     context '#parameters for answer did not pass validation'do
       let(:errors) { instance_double(ActiveModel::Errors) }
 
-      before { expect(answer).to receive(:valid?).and_return(false) }
+      before { allow(answer).to receive(:valid?).and_return(false) }
 
-      before { expect(answer).to receive(:errors).and_return(errors) }
+      before { allow(answer).to receive(:errors).and_return(errors) }
 
       before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
@@ -40,7 +40,7 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe '#show' do
-    before { expect(Answer).to receive(:find).with('1').and_return(answer) }
+    before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
     before { process :show, method: :get, params: { id: answer.id }, format: :json }
 
@@ -53,16 +53,16 @@ RSpec.describe AnswersController, type: :controller do
   describe '#update' do
     let(:resource_params) { attributes_for(:answer) }
 
-    before { expect(Answer).to receive(:find).with("1").and_return(answer) }
+    before { allow(Answer).to receive(:find).with("1").and_return(answer) }
 
     before do
       expect(AnswersUpdater).to receive(:new).with(answer, permit!(resource_params)) do
-        double.tap { |answers_updater| expect(answers_updater).to receive(:update).and_return(answer) }
+        double.tap { |answers_updater| allow(answers_updater).to receive(:update).and_return(answer) }
       end
     end
 
     context '#parameters for answer passed validation'do
-      before { expect(answer).to receive(:valid?).and_return(true) }
+      before { allow(answer).to receive(:valid?).and_return(true) }
 
       before { process :update, method: :patch, params: { id: answer.id, answer: resource_params }, format: :json }
 
@@ -74,9 +74,9 @@ RSpec.describe AnswersController, type: :controller do
     context '#parameters for answer did not pass validation'do
       let(:errors) { instance_double(ActiveModel::Errors) }
 
-      before { expect(answer).to receive(:valid?).and_return(false) }
+      before { allow(answer).to receive(:valid?).and_return(false) }
 
-      before { expect(answer).to receive(:errors).and_return(errors) }
+      before { allow(answer).to receive(:errors).and_return(errors) }
 
       before { process :update, method: :patch, params: { id: answer.id, answer: resource_params }, format: :json }
 
@@ -89,11 +89,11 @@ RSpec.describe AnswersController, type: :controller do
   describe '#index' do
     let(:params) { attributes_for(:answer) }
 
-    before { expect(subject).to receive(:params).and_return(params) }
+    before { allow(subject).to receive(:params).and_return(params) }
 
     before do
       expect(AnswersSearcher).to receive(:new).with(params) do
-        double.tap { |answers_searcher| expect(answers_searcher).to receive(:search).and_return(:collection) }
+        double.tap { |answers_searcher| allow(answers_searcher).to receive(:search).and_return(:collection) }
       end
     end
 
@@ -106,11 +106,11 @@ RSpec.describe AnswersController, type: :controller do
 
 
   describe '#destroy' do
-    before { expect(Answer).to receive(:find).with('1').and_return(answer) }
+    before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
     before do
       expect(AnswersDestroyer).to receive(:new).with(answer) do
-        double.tap { |answers_destroyer| expect(answers_destroyer).to receive(:destroy) }
+        double.tap { |answers_destroyer| allow(answers_destroyer).to receive(:destroy) }
       end
     end
 

@@ -14,7 +14,7 @@ RSpec.describe AnswersSearcher do
 
       before { allow(result_all).to receive(:where).with(question_id: '1').and_return(:result) }
 
-      # its(:search) { is_expected.to eq :result }
+      its(:search) { is_expected.to eq :result }
     end
 
     context '#body.present?'do
