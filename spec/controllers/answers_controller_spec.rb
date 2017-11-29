@@ -9,7 +9,7 @@ RSpec.describe AnswersController, type: :controller do
     let(:resource_params) { attributes_for(:answer) }
 
     before do
-      expect(AnswersCreator).to receive(:new).with(permit!(resource_params)) do
+      allow(AnswersCreator).to receive(:new).with(permit!(resource_params)) do
         double.tap { |answers_creator| allow(answers_creator).to receive(:create).and_return(answer) }
       end
     end
@@ -53,10 +53,10 @@ RSpec.describe AnswersController, type: :controller do
   describe '#update' do
     let(:resource_params) { attributes_for(:answer) }
 
-    before { allow(Answer).to receive(:find).with("1").and_return(answer) }
+    before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
     before do
-      expect(AnswersUpdater).to receive(:new).with(answer, permit!(resource_params)) do
+      allow(AnswersUpdater).to receive(:new).with(answer, permit!(resource_params)) do
         double.tap { |answers_updater| allow(answers_updater).to receive(:update).and_return(answer) }
       end
     end
@@ -92,7 +92,7 @@ RSpec.describe AnswersController, type: :controller do
     before { allow(subject).to receive(:params).and_return(params) }
 
     before do
-      expect(AnswersSearcher).to receive(:new).with(params) do
+      allow(AnswersSearcher).to receive(:new).with(params) do
         double.tap { |answers_searcher| allow(answers_searcher).to receive(:search).and_return(:collection) }
       end
     end
@@ -110,7 +110,7 @@ RSpec.describe AnswersController, type: :controller do
 
     before do
       expect(AnswersDestroyer).to receive(:new).with(answer) do
-        double.tap { |answers_destroyer| allow(answers_destroyer).to receive(:destroy) }
+        double.tap { |answers_destroyer| expect(answers_destroyer).to receive(:destroy) }
       end
     end
 

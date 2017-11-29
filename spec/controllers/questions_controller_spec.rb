@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  # xit { is_expected.to be_an ApplicationController }
   let(:attrs) { attributes_for(:question) }
   let(:question) { instance_double(Question, id: 1, as_json: attrs, **attrs) }
 
@@ -10,7 +9,7 @@ RSpec.describe QuestionsController, type: :controller do
     let(:resource_params) { attributes_for(:question) }
 
     before do
-      expect(QuestionsCreator).to receive(:new).with(permit!(resource_params)) do
+      allow(QuestionsCreator).to receive(:new).with(permit!(resource_params)) do
         double.tap { |questions_creator| allow(questions_creator).to receive(:create).and_return(question) }
       end
     end
@@ -54,10 +53,10 @@ RSpec.describe QuestionsController, type: :controller do
   describe '#update' do
     let(:resource_params) { attributes_for(:question) }
 
-    before { allow(Question).to receive(:find).with("1").and_return(question) }
+    before { allow(Question).to receive(:find).with('1').and_return(question) }
 
     before do
-      expect(QuestionsUpdater).to receive(:new).with(question, permit!(resource_params)) do
+      allow(QuestionsUpdater).to receive(:new).with(question, permit!(resource_params)) do
         double.tap { |questions_updater| allow(questions_updater).to receive(:update).and_return(question) }
       end
     end
@@ -93,7 +92,7 @@ RSpec.describe QuestionsController, type: :controller do
     before { allow(subject).to receive(:params).and_return(params) }
 
     before do
-      expect(QuestionsSearcher).to receive(:new).with(params) do
+      allow(QuestionsSearcher).to receive(:new).with(params) do
         double.tap { |questions_searcher| allow(questions_searcher).to receive(:search).and_return(:collection) }
       end
     end
@@ -107,11 +106,11 @@ RSpec.describe QuestionsController, type: :controller do
 
 
   describe '#destroy' do
-    before { allow(Question).to receive(:find).with('1').and_return(question) }
+    before { expect(Question).to receive(:find).with('1').and_return(question) }
 
     before do
       expect(QuestionsDestroyer).to receive(:new).with(question) do
-        double.tap { |questions_destroyer| allow(questions_destroyer).to receive(:destroy) }
+        double.tap { |questions_destroyer| expect(questions_destroyer).to receive(:destroy) }
       end
     end
 
