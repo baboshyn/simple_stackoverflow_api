@@ -1,13 +1,15 @@
-class QuestionsCreator
-
+class QuestionsCreator < AbstractService
   def initialize(params = {})
     @params = params
   end
 
-  def create
-    Question.create!(@params)
+  def resource
+    @resource = Question.new(@params)
+  end
 
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+  def create
+    save_resource
+
+    @resource
   end
 end

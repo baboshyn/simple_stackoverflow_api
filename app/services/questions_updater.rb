@@ -1,16 +1,19 @@
-class QuestionsUpdater
+class QuestionsUpdater < AbstractService
   def initialize(question, params)
     @question = question
 
     @params = params
   end
 
-  def update
-    @question.update!(@params)
+  def resource
+    @question.assign_attributes(@params)
 
     @question
+  end
 
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+  def update
+    save_resource
+
+    @question
   end
 end
