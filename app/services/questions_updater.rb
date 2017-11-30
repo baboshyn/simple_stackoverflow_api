@@ -1,5 +1,5 @@
 class QuestionsUpdater
-  include ErrorsHandler
+  include ErrorsHandable
 
   def initialize(question, params)
     @question = question

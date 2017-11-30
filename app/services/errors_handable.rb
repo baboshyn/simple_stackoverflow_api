@@ -1,4 +1,4 @@
-module ErrorsHandler
+module ErrorsHandable
   def save_resource
     resource.save!
 

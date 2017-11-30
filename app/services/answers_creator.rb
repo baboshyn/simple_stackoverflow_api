@@ -1,5 +1,5 @@
 class AnswersCreator
-  include ErrorsHandler
+  include ErrorsHandable
 
   attr_reader :resource
 
