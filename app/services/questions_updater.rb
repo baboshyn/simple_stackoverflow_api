@@ -1,4 +1,6 @@
-class QuestionsUpdater < AbstractService
+class QuestionsUpdater
+  include ErrorsHandler
+
   def initialize(question, params)
     @question = question
 
@@ -13,7 +15,5 @@ class QuestionsUpdater < AbstractService
 
   def update
     save_resource
-
-    @question
   end
 end
