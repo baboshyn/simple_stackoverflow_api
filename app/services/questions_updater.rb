@@ -1,19 +1,18 @@
 class QuestionsUpdater
   include ErrorsHandable
 
+  attr_reader :resource
+
   def initialize(question, params)
-    @question = question
+    @resource = question
 
     @params = params
   end
 
-  def resource
-    @question.assign_attributes(@params)
-
-    @question
-  end
 
   def update
+    @resource.assign_attributes(@params)
+
     save_resource
   end
 end
