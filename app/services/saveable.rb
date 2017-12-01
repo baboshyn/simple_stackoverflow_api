@@ -1,8 +1,8 @@
-module ErrorsHandable
+module Saveable
   def save_resource
-    resource.save!
+    @resource.save!
 
-    resource
+    @resource
     rescue ActiveRecord::RecordInvalid => invalid
     invalid.record
   end

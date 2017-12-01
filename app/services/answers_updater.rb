@@ -1,7 +1,5 @@
 class AnswersUpdater
-  include ErrorsHandable
-
-  attr_reader :resource
+  include Saveable
 
   def initialize(answer, params)
     @resource = answer

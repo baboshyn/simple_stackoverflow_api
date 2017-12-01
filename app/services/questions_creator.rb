@@ -1,11 +1,7 @@
 class QuestionsCreator
-  include ErrorsHandable
-
-  attr_reader :resource
+  include Saveable
 
   def initialize(params = {})
-    @params = params
-
     @resource = Question.new(params)
   end
 
