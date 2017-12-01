@@ -1,8 +1,10 @@
 module Saveable
-  def save_resource
-    @resource.save!
+  attr_reader :resource
 
-    @resource
+  def save_resource
+    resource.save!
+
+    resource
     rescue ActiveRecord::RecordInvalid => invalid
     invalid.record
   end
