@@ -10,3 +10,6 @@ questions = FactoryGirl.create_list :question, 4
 
 puts "Create #{ 4 } answers"
 answers = FactoryGirl.create_list :answer, 4
+
+puts "Create #{ 4 } users"
+user = FactoryGirl.create_list :user, 4
