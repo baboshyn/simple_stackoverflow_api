@@ -1,6 +1,6 @@
 class QuestionsDestroyer
-  def initialize params
-    @question = params
+  def initialize question
+    @question = question
   end
 
   def destroy
