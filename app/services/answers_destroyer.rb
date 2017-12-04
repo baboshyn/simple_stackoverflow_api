@@ -1,6 +1,6 @@
 class AnswersDestroyer
-  def initialize params
-    @answer = params
+  def initialize answer
+    @answer = answer
   end
 
   def destroy

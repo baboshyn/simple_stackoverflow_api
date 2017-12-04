@@ -1,9 +1,11 @@
 class AnswersCreator
+  include Saveable
+
   def initialize(params = {})
-    @params = params
+    @resource = Answer.new(params)
   end
 
   def create
-    Answer.create!(@params)
+    save_resource
   end
 end

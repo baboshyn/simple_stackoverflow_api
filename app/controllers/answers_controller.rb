@@ -4,7 +4,11 @@ class AnswersController < ApplicationController
   def create
     answer = AnswersCreator.new(resource_params).create
 
-    render json: answer, status: 201
+    if answer.valid?
+      render json: answer, status: 201
+    else
+      render json: answer.errors, status: 422
+    end
   end
 
   def show
@@ -20,7 +24,11 @@ class AnswersController < ApplicationController
   def update
     answer = AnswersUpdater.new(@answer, resource_params).update
 
-    render json: answer
+    if answer.valid?
+      render json: answer, status: 200
+    else
+      render json: answer.errors, status: 422
+    end
   end
 
   def destroy
@@ -28,7 +36,6 @@ class AnswersController < ApplicationController
 
     head 204
   end
-
 
   private
   def set_answer

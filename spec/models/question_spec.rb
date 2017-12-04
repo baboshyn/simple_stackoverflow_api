@@ -7,9 +7,5 @@ RSpec.describe Question, type: :model do
 
   it { is_expected.to validate_presence_of :body }
 
-  it { is_expected.to validate_uniqueness_of :title }
-
-  it { is_expected.to validate_uniqueness_of :body }
-
   it { is_expected.to have_many(:answers) }
 end

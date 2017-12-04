@@ -1,9 +1,11 @@
 class QuestionsCreator
+  include Saveable
+
   def initialize(params = {})
-    @params = params
+    @resource = Question.new(params)
   end
 
   def create
-    Question.create!(@params)
+    save_resource
   end
 end

@@ -7,8 +7,10 @@ RSpec.describe QuestionsUpdater do
   subject { questions_updater }
 
   describe '#update' do
-    before { expect(question).to receive(:update!).with(params).and_return(question) }
+    before { allow(question).to receive(:assign_attributes).with(params).and_return(question) }
 
-    its(:update) { is_expected.to eq question }  
+    before { allow(question).to receive(:save!).and_return(question) }
+
+    its(:update) { is_expected.to eq question }
   end
 end

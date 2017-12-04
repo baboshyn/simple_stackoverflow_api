@@ -7,8 +7,8 @@ RSpec.describe QuestionsDestroyer do
   subject { questions_destroyer }
 
   describe '#destroy' do
-    before { expect(question).to receive(:destroy!).and_return(true) }
+    before { expect(question).to receive(:destroy!) }
 
-    its(:destroy) { is_expected.to eq true }
+    it { expect { subject.send :destroy }.to_not raise_error }
   end
 end

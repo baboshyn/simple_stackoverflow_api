@@ -1,10 +1,14 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
 
-  def create    
+  def create
     question = QuestionsCreator.new(resource_params).create
 
-    render json: question, status: 201
+    if question.valid?
+      render json: question, status: 201
+    else
+      render json: question.errors, status: 422
+    end
   end
 
   def show
@@ -20,7 +24,11 @@ class QuestionsController < ApplicationController
   def update
     question = QuestionsUpdater.new(@question, resource_params).update
 
-    render json: question
+    if question.valid?
+      render json: question, status: 200
+    else
+      render json: question.errors, status: 422
+    end
   end
 
   def destroy
@@ -28,7 +36,6 @@ class QuestionsController < ApplicationController
 
     head 204
   end
-
 
   private
   def set_question

@@ -1,13 +1,16 @@
 class QuestionsUpdater
+  include Saveable
+
   def initialize(question, params)
-    @question = question
+    @resource = question
 
     @params = params
   end
 
-  def update
-    @question.update!(@params)
 
-    @question
+  def update
+    @resource.assign_attributes(@params)
+
+    save_resource
   end
 end

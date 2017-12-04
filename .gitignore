@@ -17,6 +17,9 @@
 .byebug_history
 
 database.yml
+secrets.yml
+
+schema.rb
 
 .ruby-gemset
 .ruby-version
