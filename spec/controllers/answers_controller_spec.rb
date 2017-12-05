@@ -3,9 +3,12 @@ require 'rails_helper'
 RSpec.describe AnswersController, type: :controller do
   let(:attrs) { attributes_for(:answer) }
   let(:answer) { instance_double(Answer, id: 1, as_json: attrs, **attrs) }
+  let(:user) { instance_double User }
 
 
   describe '#create' do
+    before { sign_in User }
+
     let(:resource_params) { attributes_for(:answer) }
 
     before do
@@ -51,6 +54,8 @@ RSpec.describe AnswersController, type: :controller do
 
 
   describe '#update' do
+    before { sign_in User }
+
     let(:resource_params) { attributes_for(:answer) }
 
     before { allow(Answer).to receive(:find).with('1').and_return(answer) }
@@ -106,6 +111,8 @@ RSpec.describe AnswersController, type: :controller do
 
 
   describe '#destroy' do
+    before { sign_in User }
+
     before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
     before do
