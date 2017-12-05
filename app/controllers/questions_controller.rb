@@ -1,4 +1,6 @@
 class QuestionsController < ApplicationController
+  skip_before_action :authenticate, only: [:show, :index]
+
   before_action :set_question, only: [:show, :update, :destroy]
 
   def create

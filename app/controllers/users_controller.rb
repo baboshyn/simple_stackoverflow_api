@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  skip_before_action :authenticate
+
   def create
     user = UsersCreator.new(resource_params).create
 
