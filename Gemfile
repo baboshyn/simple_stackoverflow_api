@@ -13,6 +13,7 @@ group :development, :test do
   gem 'rspec-its'
   gem 'faker'
   gem 'factory_girl_rails'
+  gem 'simplecov', :require => false
 end
 
 group :development do
