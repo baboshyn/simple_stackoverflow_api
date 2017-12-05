@@ -18,6 +18,7 @@
 
 database.yml
 secrets.yml
+coverage
 
 schema.rb
 
