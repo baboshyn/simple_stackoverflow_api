@@ -1,6 +1,14 @@
 class ApplicationController < ActionController::API
-   rescue_from ActiveRecord::RecordNotFound do |exception|
+  include ActionController::HttpAuthentication::Token::ControllerMethods
 
-    render json: exception
+  include Authenticatable
+
+  before_action :authenticate
+
+  attr_reader :current_user
+
+  rescue_from ActiveRecord::RecordNotFound do
+
+    head 404
   end
 end
