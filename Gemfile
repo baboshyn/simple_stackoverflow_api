@@ -5,6 +5,7 @@ gem 'pg'
 gem 'puma'
 gem 'active_model_serializers'
 gem 'bcrypt'
+gem 'jwt'
 
 group :development, :test do
   gem 'rspec-rails'
@@ -16,5 +17,5 @@ group :development, :test do
 end
 
 group :development do
-  gem 'byebug', platform: :mri
+  gem 'pry-byebug'
 end
