@@ -20,10 +20,6 @@ database.yml
 secrets.yml
 coverage
 
-tokens_controller.rb
-
-token.rb
-
 schema.rb
 
 .ruby-gemset
