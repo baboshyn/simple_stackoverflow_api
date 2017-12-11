@@ -1,13 +1,11 @@
 module Authenticatable
-  def authenticate
-    unless current_user
-      render json: {error: "unauthorized"}, status: 401
-    end
-  end
+  attr_reader :current_user
 
-  def current_user
+  def authenticate
     if payload
-      @current_user = User.find_by(id: payload['user'])
+      @current_user = User.find(payload['user'])
+    else
+      render json: {error: "unauthorized"}, status: 401
     end
   end
 
@@ -16,7 +14,9 @@ private
     auth_header = request.headers['Authorization']
     token = auth_header.split(' ').last
     JsonWebToken.decode(token).first
-  rescue
+  rescue NoMethodError
     nil
   end
 end
+
+
