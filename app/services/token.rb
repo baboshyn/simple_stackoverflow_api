@@ -19,7 +19,7 @@ class Token
 
   def save
     if valid?
-      JsonWebToken.issue({ user: user.id })
+      JsonWebToken.encode({ user: user.id })
     else
       errors
     end

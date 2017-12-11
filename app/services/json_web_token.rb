@@ -3,8 +3,8 @@ class JsonWebToken
 
     AUTH_SECRET = Rails.application.secrets.secret_key_base
 
-    def issue(payload)
-      payload.reverse_merge!(meta)
+    def encode(payload)
+      payload[:exp] = 1.day.from_now.to_i
       JWT.encode(
         payload,
         AUTH_SECRET)
@@ -13,12 +13,6 @@ class JsonWebToken
     def decode(token)
       JWT.decode(token,
         AUTH_SECRET)
-    end
-
-    def meta
-      {
-        exp: 1.minutes.from_now.to_i
-      }
     end
   end
 end
