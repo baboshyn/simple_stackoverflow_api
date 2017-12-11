@@ -1,10 +1,10 @@
 class Token
   include ActiveModel::Validations
 
-  attr_reader :email, :password
+  attr_reader :login, :password
 
   def initialize(params = {})
-    @email = params[:email]
+    @email = params[:login]
 
     @password = params[:password]
   end
@@ -13,7 +13,7 @@ class Token
     if user
       model.errors.add :password, 'is invalid' unless user.authenticate password
     else
-      model.errors.add :email, 'not found'
+      model.errors.add :login, 'not found'
     end
   end
 
@@ -27,6 +27,6 @@ class Token
 
   private
   def user
-    user = User.find_by email: email
+    user = User.find_by login: login
   end
 end

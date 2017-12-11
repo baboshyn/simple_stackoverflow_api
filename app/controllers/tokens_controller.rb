@@ -2,17 +2,19 @@ class TokensController < ApplicationController
   skip_before_action :authenticate, only: [:create]
 
   def create
-    token = Token.new(resource_params).save
+    user = User.find_by!(login: resource_params[:login])
 
-    if token.is_a?ActiveModel::Errors
-      render json: token.messages, status: 422
-    else
+    if user.authenticate resource_params[:password]
+      token = JsonWebToken.encode({ user: user.id })
+
       render json: { token: token }, status: 201
+    else
+      head 404
     end
   end
 
   private
   def resource_params
-    params.require(:token).permit(:email, :password)
+    params.require(:token).permit(:login, :password)
   end
 end
