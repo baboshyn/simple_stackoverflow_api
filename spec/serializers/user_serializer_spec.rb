@@ -12,7 +12,7 @@ RSpec.describe UserSerializer, type: :serializer do
 
 
   it 'should have a name that matches' do
-    expect(subject['name']).to eq (user.name)
+    expect(subject['login']).to eq (user.login)
   end
 
   it 'should have a email that matches' do
