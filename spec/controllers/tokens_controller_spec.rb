@@ -1,41 +1,45 @@
 require 'rails_helper'
-
 RSpec.describe TokensController, type: :controller do
 
   describe '#create' do
-    let(:resource_params) { { token: { email: 'test@test.com', password: 'test' } } }
+    let(:params) { { token: { login: 'test', password: 'test' } } }
+    let(:resource_params) { params[:token] }
+    let(:user) { instance_double User, id: '1' }
 
-    before do
-      allow(Token).to receive(:new).with(permit!(email: 'test@test.com', password: 'test')) do
-        double.tap { |token| allow(token).to receive(:save).and_return(resource) }
+    context 'user was not found by login' do
+      before { expect(User).to receive(:find_by!).with(login: resource_params[:login]).and_raise ActiveRecord::RecordNotFound }
+
+      before { process :create, method: :post, params: params, format: :json }
+
+      it { expect(response).to have_http_status 404 }
+    end
+
+    context 'user was foun by login' do
+      before { allow(User).to receive(:find_by!).with(login: resource_params[:login]).and_return(user) }
+
+      context 'password is invalid' do
+        before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(false) }
+
+        before { process :create, method: :post, params: params, format: :json }
+
+        it { expect(response).to have_http_status 404 }
       end
-    end
 
-    context '#parameters for token did not passed validation'do
+      context 'password is valid' do
+        let(:token) { double }
 
-      let(:resource) { instance_double(ActiveModel::Errors) }
+        before { allow(User).to receive(:find_by!).with(login: resource_params[:login]).and_return(user) }
 
-      let(:messages) { instance_double(ActiveModel::Errors) }
+        before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
 
-      before { allow(resource).to receive(:is_a?).with(ActiveModel::Errors).and_return(true) }
+        before { allow(JsonWebToken).to receive(:encode).with({user: user.id}).and_return(token) }
 
-      before { allow(resource).to receive(:messages).and_return(messages) }
+        before { process :create, method: :post, params: params, format: :json }
 
-      before { process :create, method: :post, params: resource_params, format: :json }
+        it { expect(response.body).to eq ({ token: token }).to_json }
 
-      it { expect(response.body).to eq messages.to_json }
-
-      it { expect(response).to have_http_status 422 }
-    end
-
-    context '#parameters for token passed validation'do
-      let(:resource) { instance_double Token }
-
-      before { process :create, method: :post, params: resource_params, format: :json }
-
-      it { expect(response.body).to eq ({ token: resource }).to_json }
-
-      it { expect(response).to have_http_status 201 }
+        it { expect(response).to have_http_status 201 }
+      end
     end
   end
 end
