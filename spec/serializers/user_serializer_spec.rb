@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe UserSerializer, type: :serializer do
-  let(:user) { FactoryGirl.build(:user) }
+  let(:user) { FactoryBot.build(:user) }
   let(:serializer) { UserSerializer.new(user) }
   let(:serialization) { ActiveModelSerializers::Adapter.create(serializer) }
 

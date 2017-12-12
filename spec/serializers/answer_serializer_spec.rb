@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AnswerSerializer, type: :serializer do
-  let(:answer) { FactoryGirl.build(:answer) }
+  let(:answer) { FactoryBot.build(:answer) }
   let(:serializer) { AnswerSerializer.new(answer) }
   let(:serialization) { ActiveModelSerializers::Adapter.create(serializer) }
 

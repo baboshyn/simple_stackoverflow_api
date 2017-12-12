@@ -12,7 +12,7 @@ group :development, :test do
   gem 'shoulda-matchers'
   gem 'rspec-its'
   gem 'faker'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'simplecov', :require => false
   gem 'pry-byebug'
 end

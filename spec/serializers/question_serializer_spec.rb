@@ -1,6 +1,6 @@
 require 'rails_helper'
 RSpec.describe QuestionSerializer, type: :serializer do
-  let(:question) { FactoryGirl.build(:question) }
+  let(:question) { FactoryBot.build(:question) }
   let(:serializer) { QuestionSerializer.new(question) }
   let(:serialization) { ActiveModelSerializers::Adapter.create(serializer) }
 

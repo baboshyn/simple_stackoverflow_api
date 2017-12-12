@@ -61,7 +61,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
   config.include Authentication
   config.include Permitter
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
 
   Shoulda::Matchers.configure do |config|
     config.integrate do |with|
