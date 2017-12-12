@@ -6,15 +6,13 @@ class JsonWebToken
     def encode(payload)
       payload[:exp] = 1.day.from_now.to_i
 
-      JWT.encode( payload, AUTH_SECRET)
+      JWT.encode(payload, AUTH_SECRET)
     end
 
     def decode(token)
       JWT.decode(token, AUTH_SECRET)
-    rescue JWT::ExpiredSignature
-      nil
-    rescue JWT::DecodeError
-      nil
+    rescue JWT::ExpiredSignature, JWT::DecodeError
+      false
     end
   end
 end
