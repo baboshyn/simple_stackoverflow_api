@@ -7,13 +7,9 @@ RSpec.describe ApplicationController, type: :controller do
 
     before { allow(subject).to receive(:authenticate_or_request_with_http_token).and_yield('token') }
 
-    before { allow(JsonWebToken).to receive(:decode).with('token').and_return(payload) }
+    before { allow(SimpleStackoverflawToken).to receive(:decode).with('token').and_return(payload) }
 
-    before do
-      allow(payload).to receive(:[]).with(0) do
-        double.tap { |a| allow(a).to receive(:[]).with('user').and_return(1) }
-      end
-    end
+    before { expect(payload).to receive(:[]).with('user_id').and_return(1) }
 
     before { allow(User).to receive(:find).with(1).and_return(current_user) }
 

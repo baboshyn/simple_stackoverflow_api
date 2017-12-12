@@ -1,5 +1,5 @@
 require 'rails_helper'
-RSpec.describe JsonWebToken do
+RSpec.describe SimpleStackoverflawToken do
 
   describe 'AUTH_SECRET' do
    let(:auth_secret) {stub_const 'AUTH_SECRET', 'secret' }

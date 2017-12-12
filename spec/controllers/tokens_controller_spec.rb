@@ -36,7 +36,7 @@ RSpec.describe TokensController, type: :controller do
 
         before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
 
-        before { allow(JsonWebToken).to receive(:encode).with({user: user.id}).and_return(token) }
+        before { allow(SimpleStackoverflawToken).to receive(:encode).with({user: user.id}).and_return(token) }
 
         before { process :create, method: :post, params: params, format: :json }
 
