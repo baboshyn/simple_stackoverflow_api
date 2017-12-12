@@ -4,6 +4,7 @@ class JsonWebToken
     AUTH_SECRET = Rails.application.secrets.secret_key_base
 
     def encode(payload)
+      binding.pry
       payload[:exp] = 1.day.from_now.to_i
 
       JWT.encode(payload, AUTH_SECRET)
