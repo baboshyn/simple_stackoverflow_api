@@ -9,8 +9,10 @@ RSpec.describe QuestionsCreator do
   describe '#create' do
     before { allow(Question).to receive(:new).with(params).and_return(question) }
 
-    before { allow(question).to receive(:save!).and_return(question) }
+    context do
+      before { allow(question).to receive(:save!).and_return(question) }
 
-    its(:create) { is_expected.to eq question }
+      its(:create) { is_expected.to eq question }
+    end
   end
 end
