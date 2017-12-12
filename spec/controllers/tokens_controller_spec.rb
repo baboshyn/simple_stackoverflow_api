@@ -2,12 +2,12 @@ require 'rails_helper'
 RSpec.describe TokensController, type: :controller do
 
   describe '#create' do
-    let(:params) { { login: { login: 'test', password: 'test' } } }
+    let(:params) { { login: { email: 'test', password: 'test' } } }
     let(:resource_params) { params[:login] }
     let(:user) { instance_double User, id: '1' }
 
     context 'user was not found by login' do
-      before { expect(User).to receive(:find_by!).with(login: resource_params[:login]).and_raise ActiveRecord::RecordNotFound }
+      before { expect(User).to receive(:find_by!).with(email: resource_params[:email]).and_raise ActiveRecord::RecordNotFound }
 
       before { process :create, method: :post, params: params, format: :json }
 
@@ -15,7 +15,7 @@ RSpec.describe TokensController, type: :controller do
     end
 
     context 'user was foun by login' do
-      before { allow(User).to receive(:find_by!).with(login: resource_params[:login]).and_return(user) }
+      before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
 
       context 'password is invalid' do
         before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(false) }
@@ -30,7 +30,7 @@ RSpec.describe TokensController, type: :controller do
       context 'password is valid' do
         let(:token) { double }
 
-        before { allow(User).to receive(:find_by!).with(login: resource_params[:login]).and_return(user) }
+        before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
 
         before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
 
