@@ -4,9 +4,9 @@ module Authenticatable
   def authenticate
     authenticate_or_request_with_http_token do |token|
 
-      payload = JsonWebToken.decode(token)
+      payload, _ = SimpleStackoverflawToken.decode(token)
 
-      @current_user = User.find(payload[0]['user']) if payload
+      @current_user = User.find(payload['user_id']) if payload
     end
   end
 end

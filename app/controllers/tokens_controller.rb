@@ -5,7 +5,7 @@ class TokensController < ApplicationController
     user = User.find_by!(login: resource_params[:login])
 
     if user.authenticate resource_params[:password]
-      token = JsonWebToken.encode({ user_id: user.id })
+      token = SimpleStackoverflawToken.encode({ user_id: user.id })
 
       render json: { token: token }, status: 201
     else
