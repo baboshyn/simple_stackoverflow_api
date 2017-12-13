@@ -1,5 +1,7 @@
 require 'rails_helper'
 RSpec.describe UsersCreator do
+  it { is_expected.to be_kind_of(Saveable) }
+
   let(:params) { attributes_for(:user) }
   let(:users_creator) { UsersCreator.new params }
   let(:user) { instance_double(User, as_json: params, **params) }

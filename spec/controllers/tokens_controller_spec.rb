@@ -1,5 +1,9 @@
 require 'rails_helper'
+
 RSpec.describe TokensController, type: :controller do
+  it { is_expected.to be_kind_of(Authenticatable) }
+
+  it { is_expected.to be_an ApplicationController }
 
   describe '#create' do
     let(:params) { { login: { email: 'test', password: 'test' } } }
@@ -34,7 +38,7 @@ RSpec.describe TokensController, type: :controller do
 
         before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
 
-        before { allow(SimpleStackoverflawToken).to receive(:encode).with({user_id: user.id}).and_return(token) }
+        before { allow(SimpleStackoverflowToken).to receive(:encode).with({user_id: user.id}).and_return(token) }
 
         before { process :create, method: :post, params: params, format: :json }
 

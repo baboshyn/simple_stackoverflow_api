@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
   def show
-    render json: current_user, status: 200
+    render json: current_user
   end
 end

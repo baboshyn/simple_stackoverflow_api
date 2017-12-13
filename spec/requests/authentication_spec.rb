@@ -1,19 +1,21 @@
-require 'rails_helper'
+require 'acceptance_helper'
 
-RSpec.describe 'AuthenticationRequest', type: :request do
+RSpec.describe 'Authentication', type: :request do
 
-  let(:user) { FactoryBot.create(:user) }
+  let(:user) { FactoryBot.create(:user, attrs) }
 
-  let(:serialized_user) { UserSerializer.new(user) }
+  let(:attrs) { { login: 'test', email: 'test@test.com' } }
 
-  let(:token) { SimpleStackoverflawToken.encode({ user_id: user.id }) }
+  let(:user_response) { { id: user.id, login: user.login, email: user.email } }
+
+  let(:token) { SimpleStackoverflowToken.encode({ user_id: user.id }) }
 
   let(:headers) { { 'Authorization' => "Bearer #{token}", 'Content-type' => 'application/json' } }
 
   before { get '/profile', params: {} , headers: headers }
 
   context 'with valid params' do
-    it { expect(response.body).to eq (serialized_user).to_json }
+    it { expect(response.body).to eq user_response.to_json }
   end
 
   context 'with invalid params' do

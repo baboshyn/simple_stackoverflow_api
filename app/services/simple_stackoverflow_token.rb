@@ -1,4 +1,4 @@
-class SimpleStackoverflawToken
+class SimpleStackoverflowToken
   class << self
 
     AUTH_SECRET = Rails.application.secrets.secret_key_base

@@ -1,5 +1,7 @@
 require 'rails_helper'
 RSpec.describe QuestionsCreator do
+  it { is_expected.to be_kind_of(Saveable) }
+
   let(:params) { attributes_for(:question) }
   let(:questions_creator) { QuestionsCreator.new params }
   let(:question) { instance_double(Question, as_json: params, **params) }
@@ -9,10 +11,8 @@ RSpec.describe QuestionsCreator do
   describe '#create' do
     before { allow(Question).to receive(:new).with(params).and_return(question) }
 
-    context do
-      before { allow(question).to receive(:save!).and_return(question) }
+    before { allow(question).to receive(:save!).and_return(question) }
 
-      its(:create) { is_expected.to eq question }
-    end
+    its(:create) { is_expected.to eq question }
   end
 end

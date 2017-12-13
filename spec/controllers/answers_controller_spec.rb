@@ -1,10 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
+  it { is_expected.to be_kind_of(Authenticatable) }
+
+  it { is_expected.to be_an ApplicationController }
+
   let(:attrs) { attributes_for(:answer) }
   let(:answer) { instance_double(Answer, id: 1, as_json: attrs, **attrs) }
   let(:user) { instance_double User }
-
 
   describe '#create' do
     before { sign_in User }

@@ -1,9 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
+  it { is_expected.to be_kind_of(Authenticatable) }
+
+  it { is_expected.to be_an ApplicationController }
+
   let(:attrs) { attributes_for(:user) }
   let(:user) { instance_double(User, id: 1, as_json: attrs, **attrs) }
-
 
   describe '#create' do
     let(:resource_params) { attributes_for(:user) }
