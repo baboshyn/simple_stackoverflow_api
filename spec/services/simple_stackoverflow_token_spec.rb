@@ -7,8 +7,6 @@ RSpec.describe SimpleStackoverflowToken do
 
   let(:payload) { { user_id: user.id, exp: exp } }
 
-  let(:auth_secret) { Rails.application.secrets.secret_key_base }
-
   let(:token) { described_class.encode(payload) }
 
 
