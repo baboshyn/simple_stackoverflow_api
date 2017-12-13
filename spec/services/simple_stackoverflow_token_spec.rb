@@ -1,17 +1,18 @@
 require 'rails_helper'
 RSpec.describe SimpleStackoverflowToken do
 
-  describe 'AUTH_SECRET' do
-   let(:auth_secret) {stub_const 'AUTH_SECRET', 'secret' }
+  let(:user) { FactoryBot.create( :user) }
 
-    it { expect(auth_secret).to eq 'secret' }
-  end
+  let(:exp) { 1.day.from_now.to_i }
+
+  let(:payload) { { user_id: user.id , exp: exp } }
+
+  let(:auth_secret) { Rails.application.secrets.secret_key_base }
+
+  let(:token) { JWT.encode(payload, auth_secret) }
+
 
   describe '#decode' do
-    let(:auth_secret) {stub_const 'AUTH_SECRET', Rails.application.secrets.secret_key_base }
-
-    let(:token) { double }
-
     context 'token is expired' do
       before { expect(JWT).to receive(:decode).with(token, auth_secret).and_raise(JWT::ExpiredSignature) }
 
@@ -33,12 +34,6 @@ RSpec.describe SimpleStackoverflowToken do
 
 
   describe '#encode' do
-    let(:exp) { 1.day.from_now.to_i }
-
-    let(:payload) { { user: 1 , exp: exp } }
-
-    let(:auth_secret) {stub_const 'AUTH_SECRET', Rails.application.secrets.secret_key_base }
-
     before { expect(JWT).to receive(:encode).with(payload, auth_secret) }
 
     it { expect { described_class.encode(payload) }.to_not raise_error }
