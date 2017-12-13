@@ -99,17 +99,6 @@ RSpec.describe AnswersController, type: :controller do
   end
 
 
-  describe '#show' do
-    before { allow(Answer).to receive(:find).with('1').and_return(answer) }
-
-    before { process :show, method: :get, params: { id: answer.id }, format: :json }
-
-    it { expect(response).to have_http_status 200 }
-
-    it { expect(response.body).to eq answer.to_json }
-  end
-
-
   describe '#index' do
     let(:params) { attributes_for(:answer) }
 

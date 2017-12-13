@@ -5,7 +5,7 @@ RSpec.describe SimpleStackoverflowToken do
 
   let(:exp) { 1.day.from_now.to_i }
 
-  let(:payload) { { user_id: user.id , exp: exp } }
+  let(:payload) { { user_id: user.id, exp: exp } }
 
   let(:auth_secret) { Rails.application.secrets.secret_key_base }
 
@@ -14,34 +14,19 @@ RSpec.describe SimpleStackoverflowToken do
 
   describe '#decode' do
     context 'token is expired' do
-      before { expect(JWT).to receive(:decode).with(token, auth_secret).and_raise(JWT::ExpiredSignature) }
+      let(:exp) { 1.day.ago }
 
       it { expect(described_class.decode(token)).to eq false }
     end
 
     context 'token is invalid' do
-      before { expect(JWT).to receive(:decode).with(token, auth_secret).and_raise(JWT::DecodeError) }
+      let(:token) { 'invalid_token' }
 
       it { expect(described_class.decode(token)).to eq false }
     end
 
     context 'token is valid' do
-      before { expect(JWT).to receive(:encode).with(payload, auth_secret).and_return(token) }
-
-      before { expect(JWT).to receive(:decode).with(token, auth_secret) }
-
-      it { expect { described_class.decode(token) }.to_not raise_error }
+      it { expect(described_class.decode(token).first).to eq payload.stringify_keys }
     end
   end
-
-
-  # describe '#encode' do
-  #   before { expect(JWT).to receive(:encode).with(payload, auth_secret) }
-
-  #   it { expect { described_class.encode(payload) }.to_not raise_error }
-  # end
 end
-
-
-
-

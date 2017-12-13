@@ -1,7 +1,7 @@
 class AnswersController < ApplicationController
-  skip_before_action :authenticate, only: [:show, :index]
+  skip_before_action :authenticate, only: [:index]
 
-  before_action :set_answer, only: [:show, :update, :destroy]
+  before_action :set_answer, only: [:update, :destroy]
 
   def create
     answer = AnswersCreator.new(resource_params).create
@@ -11,10 +11,6 @@ class AnswersController < ApplicationController
     else
       render json: answer.errors, status: 422
     end
-  end
-
-  def show
-    render json: @answer
   end
 
   def index

@@ -24,5 +24,7 @@ RSpec.describe 'Authentication', type: :request do
     it { expect(response).to have_http_status 401 }
 
     it { expect(response.body).to eq "HTTP Token: Access denied.\n" }
+
+    it { expect(response.header['WWW-Authenticate']).to eq "Token realm=\"Application\"" }
   end
 end
