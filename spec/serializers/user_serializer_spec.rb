@@ -1,21 +1,9 @@
 require 'rails_helper'
-RSpec.describe UserSerializer, type: :serializer do
-  let(:user) { FactoryBot.build(:user) }
-  let(:serializer) { UserSerializer.new(user) }
-  let(:serialization) { ActiveModelSerializers::Adapter.create(serializer) }
 
-  subject { JSON.parse(serialization.to_json) }
+RSpec.describe UserSerializer do
+  subject { UserSerializer.new create(:user) }
 
-  it 'should have an id that matches' do
-    expect(subject['id']).to eq (user.id)
-  end
+  let(:attributes) { subject.attributes.keys }
 
-
-  it 'should have a name that matches' do
-    expect(subject['login']).to eq (user.login)
-  end
-
-  it 'should have a email that matches' do
-    expect(subject['email']).to eq user.email
-  end
+  it { expect(attributes).to eq %i[id login email] }
 end

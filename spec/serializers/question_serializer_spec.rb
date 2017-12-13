@@ -1,20 +1,8 @@
 require 'rails_helper'
-RSpec.describe QuestionSerializer, type: :serializer do
-  let(:question) { FactoryBot.build(:question) }
-  let(:serializer) { QuestionSerializer.new(question) }
-  let(:serialization) { ActiveModelSerializers::Adapter.create(serializer) }
+RSpec.describe QuestionSerializer do
+  subject { QuestionSerializer.new create(:question) }
 
-  subject { JSON.parse(serialization.to_json) }
+  let(:attributes) { subject.attributes.keys }
 
-  it 'should have an id that matches' do
-    expect(subject['id']).to eq question.id
-  end
-
-  it 'should have a title that matches' do
-    expect(subject['title']).to eq question.title
-  end
-
-  it 'should have a body that matches' do
-    expect(subject['body']).to eq question.body
-  end
+  it { expect(attributes).to eq %i[id title body] }
 end
