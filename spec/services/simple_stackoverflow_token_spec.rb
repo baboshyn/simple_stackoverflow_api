@@ -5,7 +5,7 @@ RSpec.describe SimpleStackoverflowToken do
 
   let(:exp) { 1.day.from_now.to_i }
 
-  let(:payload) { { user_id: user.id, exp: exp } }
+  let(:payload) { { "user_id" => user.id, "exp" => exp } }
 
   let(:auth_secret) { Rails.application.secrets.secret_key_base }
 
@@ -14,7 +14,7 @@ RSpec.describe SimpleStackoverflowToken do
 
   describe '#decode' do
     context 'token is expired' do
-      let(:exp) { 1.day.ago }
+      let(:exp) { 1.day.ago.to_i }
 
       it { expect(described_class.decode(token)).to eq false }
     end
@@ -26,7 +26,7 @@ RSpec.describe SimpleStackoverflowToken do
     end
 
     context 'token is valid' do
-      it { expect(described_class.decode(token).first).to eq payload.stringify_keys }
+      it { expect(described_class.decode(token).first).to eq payload }
     end
   end
 end
