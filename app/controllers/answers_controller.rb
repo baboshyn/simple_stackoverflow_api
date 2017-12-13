@@ -1,5 +1,5 @@
 class AnswersController < ApplicationController
-  skip_before_action :authenticate, only: [:index]
+  skip_before_action :authenticate, only: :index
 
   before_action :set_answer, only: [:update, :destroy]
 
@@ -23,7 +23,7 @@ class AnswersController < ApplicationController
     answer = AnswersUpdater.new(@answer, resource_params).update
 
     if answer.valid?
-      render json: answer, status: 200
+      render json: answer
     else
       render json: answer.errors, status: 422
     end

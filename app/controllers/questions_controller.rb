@@ -27,7 +27,7 @@ class QuestionsController < ApplicationController
     question = QuestionsUpdater.new(@question, resource_params).update
 
     if question.valid?
-      render json: question, status: 200
+      render json: question
     else
       render json: question.errors, status: 422
     end
