@@ -26,6 +26,8 @@ RSpec.describe SimpleStackoverflowToken do
     end
 
     context 'token is valid' do
+      before { expect(JWT).to receive(:encode).with(payload, auth_secret).and_return(token) }
+
       before { expect(JWT).to receive(:decode).with(token, auth_secret) }
 
       it { expect { described_class.decode(token) }.to_not raise_error }
@@ -33,9 +35,13 @@ RSpec.describe SimpleStackoverflowToken do
   end
 
 
-  describe '#encode' do
-    before { expect(JWT).to receive(:encode).with(payload, auth_secret) }
+  # describe '#encode' do
+  #   before { expect(JWT).to receive(:encode).with(payload, auth_secret) }
 
-    it { expect { described_class.encode(payload) }.to_not raise_error }
-  end
+  #   it { expect { described_class.encode(payload) }.to_not raise_error }
+  # end
 end
+
+
+
+
