@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  resources  :questions
+  resources :questions
 
-  resources :answers
+  resources :answers, only: [:create, :update, :index, :destroy]
 
   resource :user, only: :create
 
-  resource :token, only: [:create]
+  resource :token, only: :create
 
-  resource :profile, only: [:show]
+  resource :profile, only: :show
 end
