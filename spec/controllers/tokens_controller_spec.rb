@@ -34,8 +34,6 @@ RSpec.describe TokensController, type: :controller do
       context 'password is valid' do
         let(:token) { double }
 
-        before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
-
         before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
 
         before { allow(SimpleStackoverflowToken).to receive(:encode).with({user_id: user.id}).and_return(token) }

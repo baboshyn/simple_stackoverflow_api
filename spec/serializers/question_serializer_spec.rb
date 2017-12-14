@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe QuestionSerializer do
   subject { QuestionSerializer.new create(:question) }
 

@@ -9,10 +9,17 @@ RSpec.describe UsersCreator do
   subject { users_creator }
 
   describe '#create' do
-    before { allow(User).to receive(:new).with(params).and_return(user) }
+    # before { expect(User).to receive(:new).with(params).and_return(user) }
 
-    before { allow(user).to receive(:save!).and_return(user) }
+    # before { expect(user).to receive(:save!).and_return(user) }
 
-    its(:create) { is_expected.to eq user }
+    # before do
+    #   allow(User).to receive(:new).with(params) do
+    #     double.tap { |initialized_user| allow(initialized_user).to receive(:save!).and_return(user) }
+    #   end
+    # end
+
+    it { expect(subject.create).to eq user  }
   end
 end
+
