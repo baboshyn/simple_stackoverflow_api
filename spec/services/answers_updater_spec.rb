@@ -4,14 +4,15 @@ RSpec.describe AnswersUpdater do
 
   let(:params) { attributes_for(:answer) }
   let(:answer) { instance_double Answer }
-  let(:answers_updater) { AnswersUpdater.new(answer, params) }
 
-  subject { answers_updater }
+  subject { AnswersUpdater.new(answer, params) }
 
   describe '#update' do
-    before { allow(answer).to receive(:assign_attributes).with(params).and_return(answer) }
-
-    before { allow(answer).to receive(:save!).and_return(answer) }
+    before do
+      expect(answer).to receive(:assign_attributes).with(params) do
+        answer.tap { |updated_answer| expect(updated_answer).to receive(:save!) }
+      end
+    end
 
     its(:update) { is_expected.to eq answer }
   end

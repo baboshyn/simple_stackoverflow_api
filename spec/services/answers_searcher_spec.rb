@@ -1,10 +1,8 @@
 require 'rails_helper'
 RSpec.describe AnswersSearcher do
-  let(:answers_searcher) { AnswersSearcher.new params }
-
-  subject { answers_searcher }
-
   let(:result_all) {double}
+
+  subject { AnswersSearcher.new params }
 
   before { allow(Answer).to receive(:all).and_return(result_all) }
 
