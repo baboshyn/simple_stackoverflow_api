@@ -3,15 +3,16 @@ RSpec.describe QuestionsCreator do
   it { is_expected.to be_kind_of(Saveable) }
 
   let(:params) { attributes_for(:question) }
-  let(:questions_creator) { QuestionsCreator.new params }
   let(:question) { instance_double(Question, as_json: params, **params) }
 
-  subject { questions_creator }
+  subject { QuestionsCreator.new params }
 
   describe '#create' do
-    before { allow(Question).to receive(:new).with(params).and_return(question) }
-
-    before { allow(question).to receive(:save!).and_return(question) }
+    before do
+      expect(Question).to receive(:new).with(params) do
+        question.tap { |initialized_question| expect(initialized_question).to receive(:save!) }
+      end
+    end
 
     its(:create) { is_expected.to eq question }
   end
