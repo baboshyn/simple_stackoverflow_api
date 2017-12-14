@@ -3,6 +3,7 @@ RSpec.describe AnswersCreator do
   it { is_expected.to be_kind_of(Saveable) }
 
   let(:params) { attributes_for(:answer) }
+
   let(:answer) { instance_double(Answer, as_json: params, **params) }
 
   subject { AnswersCreator.new params }

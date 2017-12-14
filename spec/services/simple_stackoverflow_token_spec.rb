@@ -1,6 +1,5 @@
 require 'rails_helper'
 RSpec.describe SimpleStackoverflowToken do
-
   let(:user) { FactoryBot.create( :user) }
 
   let(:exp) { 1.day.from_now.to_i }

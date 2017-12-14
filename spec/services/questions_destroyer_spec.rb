@@ -1,6 +1,7 @@
 require 'rails_helper'
 RSpec.describe QuestionsDestroyer do
   let(:question) { instance_double Question }
+
   let(:params) { question }
 
   subject { QuestionsDestroyer.new params }

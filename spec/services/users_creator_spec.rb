@@ -3,6 +3,7 @@ RSpec.describe UsersCreator do
   it { is_expected.to be_kind_of(Saveable) }
 
   let(:params) { attributes_for(:user) }
+
   let(:user) { instance_double(User, as_json: params, **params) }
 
   subject { UsersCreator.new params }
