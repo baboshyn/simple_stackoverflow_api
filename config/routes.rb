@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
-  resources :questions
+  resources :questions, only: [:create, :update, :show, :index, :destroy]
 
   resources :answers, only: [:create, :update, :index, :destroy]
 
-  resource :user, only: :create
+  resources :users, only: :create
 
   resource :token, only: :create
 
