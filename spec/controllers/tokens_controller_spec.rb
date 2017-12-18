@@ -7,7 +7,9 @@ RSpec.describe TokensController, type: :controller do
 
   describe '#create' do
     let(:params) { { login: { email: 'test', password: 'test' } } }
+
     let(:resource_params) { params[:login] }
+
     let(:user) { instance_double User, id: '1' }
 
     context 'user was not found by login' do

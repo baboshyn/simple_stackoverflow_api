@@ -23,7 +23,6 @@ RSpec.configure do |config|
 
   config.filter_rails_from_backtrace!
 
-  config.include Permitter
   config.include FactoryBot::Syntax::Methods
 
   Shoulda::Matchers.configure do |config|

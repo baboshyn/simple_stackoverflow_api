@@ -6,17 +6,19 @@ RSpec.describe AnswersController, type: :controller do
   it { is_expected.to be_an ApplicationController }
 
   let(:attrs) { attributes_for(:answer) }
+
   let(:answer) { instance_double(Answer, id: 1, as_json: attrs, **attrs) }
+
   let(:user) { instance_double User }
+
+  let(:resource_params) { attributes_for(:answer) }
 
   context 'authentication required' do
     before { sign_in User }
 
     describe '#create' do
-      let(:resource_params) { attributes_for(:answer) }
-
       before do
-        allow(AnswersCreator).to receive(:new).with(permit!(resource_params)) do
+        allow(AnswersCreator).to receive(:new).with(resource_params) do
           double.tap { |answers_creator| allow(answers_creator).to receive(:create).and_return(answer) }
         end
       end
@@ -48,12 +50,10 @@ RSpec.describe AnswersController, type: :controller do
 
 
     describe '#update' do
-      let(:resource_params) { attributes_for(:answer) }
-
       before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
       before do
-        allow(AnswersUpdater).to receive(:new).with(answer, permit!(resource_params)) do
+        allow(AnswersUpdater).to receive(:new).with(answer, resource_params) do
           double.tap { |answers_updater| allow(answers_updater).to receive(:update).and_return(answer) }
         end
       end
@@ -102,17 +102,19 @@ RSpec.describe AnswersController, type: :controller do
   describe '#index' do
     let(:params) { attributes_for(:answer) }
 
+    let(:collection) { double }
+
     before { allow(subject).to receive(:params).and_return(params) }
 
     before do
       allow(AnswersSearcher).to receive(:new).with(params) do
-        double.tap { |answers_searcher| allow(answers_searcher).to receive(:search).and_return(:collection) }
+        double.tap { |answers_searcher| allow(answers_searcher).to receive(:search).and_return(collection) }
       end
     end
 
     before { process :index, method: :get, params: params, format: :json }
 
-    it { expect(response.body).to eq :collection.to_json }
+    it { expect(response.body).to eq collection.to_json }
 
     it { expect(response).to have_http_status 200 }
   end

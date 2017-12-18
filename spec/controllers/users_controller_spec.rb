@@ -6,13 +6,14 @@ RSpec.describe UsersController, type: :controller do
   it { is_expected.to be_an ApplicationController }
 
   let(:attrs) { attributes_for(:user) }
+
   let(:user) { instance_double(User, id: 1, as_json: attrs, **attrs) }
 
   describe '#create' do
     let(:resource_params) { attributes_for(:user) }
 
     before do
-      allow(UsersCreator).to receive(:new).with(permit!(resource_params)) do
+      allow(UsersCreator).to receive(:new).with(resource_params) do
         double.tap { |users_creator| allow(users_creator).to receive(:create).and_return(user) }
       end
     end
