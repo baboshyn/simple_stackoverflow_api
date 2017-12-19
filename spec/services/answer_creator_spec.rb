@@ -1,7 +1,5 @@
 require 'rails_helper'
 RSpec.describe AnswerCreator do
-  it { is_expected.to be_kind_of(Saveable) }
-
   let(:params) { attributes_for(:answer) }
 
   let(:answer) { instance_double(Answer, as_json: params, **params) }
@@ -9,11 +7,7 @@ RSpec.describe AnswerCreator do
   subject { AnswerCreator.new params }
 
   describe '#create' do
-    before do
-      expect(Answer).to receive(:new).with(params) do
-        answer.tap { |initialized_answer| expect(initialized_answer).to receive(:save!) }
-      end
-    end
+    before { allow(Answer).to receive(:create!).with(params).and_return(answer) }
 
     its(:create) { is_expected.to eq answer }
   end
