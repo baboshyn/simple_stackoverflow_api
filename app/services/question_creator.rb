@@ -1,11 +1,12 @@
 class QuestionCreator
-  include Saveable
-
   def initialize(params = {})
-    @resource = Question.new(params)
+    @params = params
   end
 
   def create
-    save_resource
+    Question.create!(@params)
+
+    rescue ActiveRecord::RecordInvalid => invalid
+    invalid.record
   end
 end
