@@ -23,7 +23,7 @@ RSpec.describe AnswersController, type: :controller do
         end
       end
 
-      context '#parameters for qanswer passed validation'do
+      context '#parameters for answer passed validation'do
         before { allow(answer).to receive(:valid?).and_return(true) }
 
         before { process :create, method: :post, params: { answer: resource_params }, format: :json }
