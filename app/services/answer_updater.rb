@@ -1,16 +1,17 @@
 class AnswerUpdater
-  include Saveable
-
   def initialize(answer, params)
-    @resource = answer
+    @answer = answer
 
     @params = params
   end
 
 
   def update
-    @resource.assign_attributes(@params)
+    @answer.update!(@params)
 
-    save_resource
+    @answer
+
+    rescue ActiveRecord::RecordInvalid => invalid
+    invalid.record
   end
 end

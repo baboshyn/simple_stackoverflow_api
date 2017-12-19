@@ -1,7 +1,5 @@
 require 'rails_helper'
 RSpec.describe AnswerUpdater do
-  it { is_expected.to be_kind_of(Saveable) }
-
   let(:params) { attributes_for(:answer) }
 
   let(:answer) { instance_double Answer }
@@ -9,11 +7,7 @@ RSpec.describe AnswerUpdater do
   subject { AnswerUpdater.new(answer, params) }
 
   describe '#update' do
-    before do
-      expect(answer).to receive(:assign_attributes).with(params) do
-        answer.tap { |updated_answer| expect(updated_answer).to receive(:save!) }
-      end
-    end
+    before { allow(answer).to receive(:update!).with(params).and_return(answer) }
 
     its(:update) { is_expected.to eq answer }
   end
