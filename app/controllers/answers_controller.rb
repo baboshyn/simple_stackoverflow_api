@@ -41,6 +41,6 @@ class AnswersController < ApplicationController
   end
 
   def resource_params
-    params.require(:answer).permit(:body, :question_id)
+    params.require(:answer).permit(:body, :question_id).to_h
   end
 end
