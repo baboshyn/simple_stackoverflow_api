@@ -13,8 +13,8 @@ RSpec.describe UsersController, type: :controller do
     let(:resource_params) { attributes_for(:user) }
 
     before do
-      allow(UsersCreator).to receive(:new).with(resource_params) do
-        double.tap { |users_creator| allow(users_creator).to receive(:create).and_return(user) }
+      allow(UserCreator).to receive(:new).with(resource_params) do
+        double.tap { |user_creator| allow(user_creator).to receive(:create).and_return(user) }
       end
     end
 

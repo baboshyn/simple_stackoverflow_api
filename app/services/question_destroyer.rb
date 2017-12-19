@@ -1,4 +1,4 @@
-class QuestionsDestroyer
+class QuestionDestroyer
   def initialize question
     @question = question
   end

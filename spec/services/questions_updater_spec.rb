@@ -1,12 +1,12 @@
 require 'rails_helper'
-RSpec.describe QuestionsUpdater do
+RSpec.describe QuestionUpdater do
   it { is_expected.to be_kind_of(Saveable) }
 
   let(:params) { attributes_for(:question) }
 
   let(:question) { instance_double Question }
 
-  subject { QuestionsUpdater.new(question, params) }
+  subject { QuestionUpdater.new(question, params) }
 
   describe '#update' do
     before do

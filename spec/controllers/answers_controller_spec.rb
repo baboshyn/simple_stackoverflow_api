@@ -18,8 +18,8 @@ RSpec.describe AnswersController, type: :controller do
 
     describe '#create' do
       before do
-        allow(AnswersCreator).to receive(:new).with(resource_params) do
-          double.tap { |answers_creator| allow(answers_creator).to receive(:create).and_return(answer) }
+        allow(AnswerCreator).to receive(:new).with(resource_params) do
+          double.tap { |answer_creator| allow(answer_creator).to receive(:create).and_return(answer) }
         end
       end
 
@@ -53,8 +53,8 @@ RSpec.describe AnswersController, type: :controller do
       before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
       before do
-        allow(AnswersUpdater).to receive(:new).with(answer, resource_params) do
-          double.tap { |answers_updater| allow(answers_updater).to receive(:update).and_return(answer) }
+        allow(AnswerUpdater).to receive(:new).with(answer, resource_params) do
+          double.tap { |answer_updater| allow(answer_updater).to receive(:update).and_return(answer) }
         end
       end
 
@@ -87,8 +87,8 @@ RSpec.describe AnswersController, type: :controller do
       before { allow(Answer).to receive(:find).with('1').and_return(answer) }
 
       before do
-        expect(AnswersDestroyer).to receive(:new).with(answer) do
-          double.tap { |answers_destroyer| expect(answers_destroyer).to receive(:destroy) }
+        expect(AnswerDestroyer).to receive(:new).with(answer) do
+          double.tap { |answer_destroyer| expect(answer_destroyer).to receive(:destroy) }
         end
       end
 
@@ -107,8 +107,8 @@ RSpec.describe AnswersController, type: :controller do
     before { allow(subject).to receive(:params).and_return(params) }
 
     before do
-      allow(AnswersSearcher).to receive(:new).with(params) do
-        double.tap { |answers_searcher| allow(answers_searcher).to receive(:search).and_return(collection) }
+      allow(AnswerSearcher).to receive(:new).with(params) do
+        double.tap { |answer_searcher| allow(answer_searcher).to receive(:search).and_return(collection) }
       end
     end
 

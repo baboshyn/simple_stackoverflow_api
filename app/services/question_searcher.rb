@@ -1,4 +1,4 @@
-class QuestionsSearcher
+class QuestionSearcher
   def initialize(params = {})
     @title = params[:title]
 

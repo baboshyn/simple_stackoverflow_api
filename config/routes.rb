@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   resources :users, only: :create
 
-  resource :token, only: :create
+  resources :tokens, only: :create
 
   resource :profile, only: :show
 end

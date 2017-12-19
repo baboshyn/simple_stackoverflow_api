@@ -1,12 +1,12 @@
 require 'rails_helper'
-RSpec.describe QuestionsCreator do
+RSpec.describe QuestionCreator do
   it { is_expected.to be_kind_of(Saveable) }
 
   let(:params) { attributes_for(:question) }
 
   let(:question) { instance_double(Question, as_json: params, **params) }
 
-  subject { QuestionsCreator.new params }
+  subject { QuestionCreator.new params }
 
   describe '#create' do
     before do

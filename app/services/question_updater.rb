@@ -1,8 +1,8 @@
-class AnswersUpdater
+class QuestionUpdater
   include Saveable
 
-  def initialize(answer, params)
-    @resource = answer
+  def initialize(question, params)
+    @resource = question
 
     @params = params
   end

@@ -1,4 +1,4 @@
-class AnswersDestroyer
+class AnswerDestroyer
   def initialize answer
     @answer = answer
   end

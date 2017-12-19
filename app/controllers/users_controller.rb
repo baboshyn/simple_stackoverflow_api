@@ -2,7 +2,7 @@ class UsersController < ApplicationController
   skip_before_action :authenticate, only: [:create]
 
   def create
-    user = UsersCreator.new(resource_params).create
+    user = UserCreator.new(resource_params).create
 
     if user.valid?
       render json: user, status: 201

@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
 
   def create
-    question = QuestionsCreator.new(resource_params).create
+    question = QuestionCreator.new(resource_params).create
 
     if question.valid?
       render json: question, status: 201
@@ -18,13 +18,13 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    questions = QuestionsSearcher.new(params).search
+    questions = QuestionSearcher.new(params).search
 
     render json: questions
   end
 
   def update
-    question = QuestionsUpdater.new(@question, resource_params).update
+    question = QuestionUpdater.new(@question, resource_params).update
 
     if question.valid?
       render json: question
@@ -34,7 +34,7 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    QuestionsDestroyer.new(@question).destroy
+    QuestionDestroyer.new(@question).destroy
 
     head 204
   end

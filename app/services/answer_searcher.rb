@@ -1,4 +1,4 @@
-class AnswersSearcher
+class AnswerSearcher
   def initialize(params = {})
     @body = params[:body]
 

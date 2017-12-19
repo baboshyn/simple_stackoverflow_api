@@ -4,7 +4,7 @@ class AnswersController < ApplicationController
   before_action :set_answer, only: [:update, :destroy]
 
   def create
-    answer = AnswersCreator.new(resource_params).create
+    answer = AnswerCreator.new(resource_params).create
 
     if answer.valid?
       render json: answer, status: 201
@@ -14,13 +14,13 @@ class AnswersController < ApplicationController
   end
 
   def index
-    answers = AnswersSearcher.new(params).search
+    answers = AnswerSearcher.new(params).search
 
     render json: answers
   end
 
   def update
-    answer = AnswersUpdater.new(@answer, resource_params).update
+    answer = AnswerUpdater.new(@answer, resource_params).update
 
     if answer.valid?
       render json: answer
@@ -30,7 +30,7 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-    AnswersDestroyer.new(@answer).destroy
+    AnswerDestroyer.new(@answer).destroy
 
     head 204
   end

@@ -1,16 +1,16 @@
 require 'rails_helper'
-RSpec.describe QuestionsSearcher do
+RSpec.describe AnswerSearcher do
   let(:result_all) {double}
 
-  subject { QuestionsSearcher.new params }
+  subject { AnswerSearcher.new params }
 
-  before { allow(Question).to receive(:all).and_return(result_all) }
+  before { allow(Answer).to receive(:all).and_return(result_all) }
 
   describe '#search' do
-    context '#title.present?'do
-      let(:params) { { title: 'title' } }
+    context '#parent_id.present?'do
+      let(:params) { { question_id: '1' } }
 
-      before { allow(result_all).to receive(:where).with('title ILIKE?', "%title%").and_return(:result) }
+      before { allow(result_all).to receive(:where).with(question_id: '1').and_return(:result) }
 
       its(:search) { is_expected.to eq :result }
     end

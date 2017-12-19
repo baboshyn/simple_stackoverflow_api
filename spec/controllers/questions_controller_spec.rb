@@ -18,8 +18,8 @@ RSpec.describe QuestionsController, type: :controller do
 
     describe '#create' do
       before do
-        allow(QuestionsCreator).to receive(:new).with(resource_params) do
-          double.tap { |questions_creator| allow(questions_creator).to receive(:create).and_return(question) }
+        allow(QuestionCreator).to receive(:new).with(resource_params) do
+          double.tap { |question_creator| allow(question_creator).to receive(:create).and_return(question) }
         end
       end
 
@@ -52,8 +52,8 @@ RSpec.describe QuestionsController, type: :controller do
       before { allow(Question).to receive(:find).with('1').and_return(question) }
 
       before do
-        allow(QuestionsUpdater).to receive(:new).with(question, resource_params) do
-          double.tap { |questions_updater| allow(questions_updater).to receive(:update).and_return(question) }
+        allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
+          double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
         end
       end
 
@@ -87,8 +87,8 @@ RSpec.describe QuestionsController, type: :controller do
       before { allow(Question).to receive(:find).with('1').and_return(question) }
 
       before do
-        expect(QuestionsDestroyer).to receive(:new).with(question) do
-          double.tap { |questions_destroyer| expect(questions_destroyer).to receive(:destroy) }
+        expect(QuestionDestroyer).to receive(:new).with(question) do
+          double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
         end
       end
 
@@ -118,8 +118,8 @@ RSpec.describe QuestionsController, type: :controller do
     before { allow(subject).to receive(:params).and_return(params) }
 
     before do
-      allow(QuestionsSearcher).to receive(:new).with(params) do
-        double.tap { |questions_searcher| allow(questions_searcher).to receive(:search).and_return(collection) }
+      allow(QuestionSearcher).to receive(:new).with(params) do
+        double.tap { |question_searcher| allow(question_searcher).to receive(:search).and_return(collection) }
       end
     end
 

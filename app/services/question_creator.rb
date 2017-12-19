@@ -1,8 +1,8 @@
-class AnswersCreator
+class QuestionCreator
   include Saveable
 
   def initialize(params = {})
-    @resource = Answer.new(params)
+    @resource = Question.new(params)
   end
 
   def create
