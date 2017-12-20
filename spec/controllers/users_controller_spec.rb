@@ -41,5 +41,11 @@ RSpec.describe UsersController, type: :controller do
 
       it { expect(response).to have_http_status 422 }
     end
+
+    context '#parameter "user" was not passed' do
+      before { process :create, method: :post, params: { " ": resource_params }, format: :json }
+
+      it { expect(response).to have_http_status 422 }
+    end
   end
 end
