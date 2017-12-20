@@ -1,15 +1,26 @@
 require 'rails_helper'
 RSpec.describe QuestionUpdater do
-  let(:params) { attributes_for(:question) }
-
-  let(:question) { instance_double Question }
-
   subject { QuestionUpdater.new(question, params) }
 
   describe '#update' do
+    context '#valid params were passed' do
+      let(:question) { instance_double Question }
 
-    before { allow(question).to receive(:update!).with(params).and_return(question) }
+      let(:params) { attributes_for(:question) }
 
-    its(:update) { is_expected.to eq question }
+      before { allow(question).to receive(:update!).with(params).and_return(question) }
+
+      its(:update) { is_expected.to eq question }
+    end
+
+    context '#invalid params were passed' do
+      let(:question) { Question.new }
+
+      let(:params) { {} }
+
+      before { allow(question).to receive(:update!).with(params).and_raise(ActiveRecord::RecordInvalid.new(question)) }
+
+      its(:update) { is_expected.to eq question }
+    end
   end
 end
