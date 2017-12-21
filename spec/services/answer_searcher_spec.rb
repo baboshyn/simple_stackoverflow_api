@@ -4,27 +4,25 @@ RSpec.describe AnswerSearcher do
 
   subject { AnswerSearcher.new params }
 
-  before { allow(Answer).to receive(:all).and_return(result_all) }
+  before do
+    allow(Question).to receive(:find).with(params[:question_id]) do
+      double.tap { |question| allow(question).to receive(:answers).and_return(result_all) }
+    end
+  end
 
   describe '#search' do
-    context '#parent_id.present?'do
-      let(:params) { { question_id: '1' } }
+    context '#searching answers on the question by body' do
+      let(:result) { double }
 
-      before { allow(result_all).to receive(:where).with(question_id: '1').and_return(:result) }
+      let(:params) { { body: 'body', question_id: "1" } }
 
-      its(:search) { is_expected.to eq :result }
+      before { allow(result_all).to receive(:where).with('body ILIKE?', "%body%").and_return(result) }
+
+      its(:search) { is_expected.to eq result }
     end
 
-    context '#body.present?'do
-      let(:params) { { body: 'body' } }
-
-      before { allow(result_all).to receive(:where).with('body ILIKE?', "%body%").and_return(:result) }
-
-      its(:search) { is_expected.to eq :result }
-    end
-
-    context '#all' do
-      let(:params) { { } }
+    context '#show all answers on the question' do
+      let(:params) { { question_id: "1" } }
 
       its(:search) { is_expected.to eq result_all }
     end

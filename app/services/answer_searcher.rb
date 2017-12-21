@@ -2,14 +2,12 @@ class AnswerSearcher
   def initialize(params = {})
     @body = params[:body]
 
-    @parent_id = params[:question_id]
+    parent = Question.find(params[:question_id])
 
-    @result = Answer.all
+    @result = parent.answers
   end
 
   def search
-    @result = @result.where(question_id: @parent_id) if @parent_id.present?
-
     @result = @result.where('body ILIKE?', "%#{ @body }%") if @body.present?
 
     @result
