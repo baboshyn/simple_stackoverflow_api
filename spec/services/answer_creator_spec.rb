@@ -4,21 +4,38 @@ RSpec.describe AnswerCreator do
 
   describe '#create' do
     context '#valid params were passed' do
-      let(:params) { attributes_for(:answer) }
+      let(:params) { { body: "answers body", question_id: "1" } }
 
       let(:answer) { instance_double(Answer, as_json: params, **params) }
 
-      before { allow(Answer).to receive(:create!).with(params).and_return(answer) }
+      before do
+        allow(Question).to receive(:find).with("1") do
+          double.tap do |question|
+            allow(question).to receive(:answers) do
+              double.tap { |question_answers| allow(question_answers).to receive(:create!).with(params).and_return(answer) }
+            end
+          end
+        end
+      end
 
       its(:create) { is_expected.to eq answer }
     end
 
+
     context '#invalid params were passed' do
       let(:answer) { Answer.new }
 
-      let(:params) { {} }
+      let(:params) { { body: " ", question_id: "1" } }
 
-      before { allow(Answer).to receive(:create!).with(params).and_raise(ActiveRecord::RecordInvalid.new(answer)) }
+      before do
+        expect(Question).to receive(:find).with("1") do
+          double.tap do |question|
+            expect(question).to receive(:answers) do
+              double.tap { |question_answers| allow(question_answers).to receive(:create!).with(params).and_raise(ActiveRecord::RecordInvalid.new(answer)) }
+            end
+          end
+        end
+      end
 
       its(:create) { is_expected.to eq answer }
     end
