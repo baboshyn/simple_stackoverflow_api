@@ -21,7 +21,7 @@ RSpec.describe TokensController, type: :controller do
     context 'user was foun by login' do
       before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
 
-      context 'password is invalid' do
+      context 'password is not valid' do
         before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(false) }
 
         before { process :create, method: :post, params: params, format: :json }

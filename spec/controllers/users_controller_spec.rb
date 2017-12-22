@@ -16,7 +16,7 @@ RSpec.describe UsersController, type: :controller do
       end
     end
 
-    context '#parameters for user passed validation'do
+    context 'parameters for user passed validation' do
       before { allow(user).to receive(:valid?).and_return(true) }
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
@@ -26,7 +26,7 @@ RSpec.describe UsersController, type: :controller do
       it { expect(response).to have_http_status 201 }
     end
 
-    context '#parameters for user did not pass validation'do
+    context 'parameters for user did not pass validation' do
       let(:errors) { instance_double(ActiveModel::Errors) }
 
       before { allow(user).to receive(:valid?).and_return(false) }
@@ -40,7 +40,7 @@ RSpec.describe UsersController, type: :controller do
       it { expect(response).to have_http_status 422 }
     end
 
-    context '#parameter "user" was not passed' do
+    context 'parameter "user" was not passed' do
       before { process :create, method: :post, params: { " ": resource_params }, format: :json }
 
       it { expect(response).to have_http_status 400 }
