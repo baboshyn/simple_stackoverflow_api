@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe QuestionsController, type: :controller do
-  it { is_expected.to be_kind_of(Authenticatable) }
-
   it { is_expected.to be_an ApplicationController }
 
   let(:attrs) { attributes_for(:question) }
@@ -12,6 +10,7 @@ RSpec.describe QuestionsController, type: :controller do
   let(:user) { instance_double User }
 
   let(:resource_params) { attributes_for(:question) }
+
 
   context 'authentication required' do
     before { sign_in User }
@@ -46,67 +45,108 @@ RSpec.describe QuestionsController, type: :controller do
 
         it { expect(response).to have_http_status 422 }
       end
+
+      context '#bad request' do
+        before { process :create, method: :post, params: { " ": resource_params }, format: :json }
+
+        it { expect(response).to have_http_status 400 }
+      end
     end
 
-    describe '#update' do
-      before { allow(Question).to receive(:find).with('1').and_return(question) }
 
-      before do
-        allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
-          double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
+    context '#actions for exact question' do
+      let(:question_id) { "1" }
+
+      before { allow(Question).to receive(:find).with(question_id).and_return(question) }
+
+      describe '#update' do
+        context "question was found" do
+          before do
+            allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
+              double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
+            end
+          end
+
+          context '#parameters for question passed validation'do
+            before { allow(question).to receive(:valid?).and_return(true) }
+
+            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+            it { expect(response.body).to eq question.to_json }
+
+            it { expect(response).to have_http_status 200 }
+          end
+
+          context '#parameters for question did not pass validation'do
+            let(:errors) { instance_double(ActiveModel::Errors) }
+
+            before { allow(question).to receive(:valid?).and_return(false) }
+
+            before { allow(question).to receive(:errors).and_return(errors) }
+
+            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+            it { expect(response.body).to eq errors.to_json }
+
+            it { expect(response).to have_http_status 422 }
+          end
+
+          context '#bad request' do
+            before { process :update, method: :patch, params: {id: question_id, " ": resource_params }, format: :json }
+
+            it { expect(response).to have_http_status 400 }
+          end
+        end
+
+        context "#question was not found" do
+          before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+
+          before { process :update, method: :patch, params: {id: 0, question: resource_params }, format: :json }
+
+          it { expect(response).to have_http_status 404 }
         end
       end
 
-      context '#parameters for question passed validation'do
-        before { allow(question).to receive(:valid?).and_return(true) }
+      describe '#destroy' do
+        context '#question was found' do
+          before do
+            expect(QuestionDestroyer).to receive(:new).with(question) do
+              double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
+            end
+          end
 
-        before { process :update, method: :patch, params: { id: question.id, question: resource_params }, format: :json }
+          before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
 
-        it { expect(response.body).to eq question.to_json }
+          it { expect(response).to have_http_status 204 }
+        end
 
-        it { expect(response).to have_http_status 200 }
-      end
+        context '#question was not found' do
+          before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
 
-      context '#parameters for question did not pass validation'do
-        let(:errors) { instance_double(ActiveModel::Errors) }
+          before { process :destroy, method: :delete, params: {id: 0}, format: :json }
 
-        before { allow(question).to receive(:valid?).and_return(false) }
-
-        before { allow(question).to receive(:errors).and_return(errors) }
-
-        before { process :update, method: :patch, params: { id: question.id, question: resource_params }, format: :json }
-
-        it { expect(response.body).to eq errors.to_json }
-
-        it { expect(response).to have_http_status 422 }
-      end
-    end
-
-
-    describe '#destroy' do
-      before { allow(Question).to receive(:find).with('1').and_return(question) }
-
-      before do
-        expect(QuestionDestroyer).to receive(:new).with(question) do
-          double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
+          it { expect(response).to have_http_status 404 }
         end
       end
 
-      before { process :destroy, method: :delete, params: { id: question.id }, format: :json }
+      describe '#show' do
+        context '#question was found' do
+          before { process :show, method: :get, params: { id: question_id }, format: :json }
 
-      it { expect(response).to have_http_status 204 }
+          it { expect(response).to have_http_status 200 }
+
+          it { expect(response.body).to eq question.to_json }
+        end
+
+        context '#question was not found' do
+          before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+
+          before { process :show, method: :get, params: {id: 0}, format: :json }
+
+          it { expect(response).to have_http_status 404 }
+        end
+      end
     end
-  end
-
-
-  describe '#show' do
-    before { allow(Question).to receive(:find).with('1').and_return(question) }
-
-    before { process :show, method: :get, params: { id: question.id }, format: :json }
-
-    it { expect(response).to have_http_status 200 }
-
-    it { expect(response.body).to eq question.to_json }
   end
 
 

@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe AnswersController, type: :controller do
-  it { is_expected.to be_kind_of(Authenticatable) }
-
   it { is_expected.to be_an ApplicationController }
 
   let(:attrs) { attributes_for(:answer) }
@@ -11,14 +9,19 @@ RSpec.describe AnswersController, type: :controller do
 
   let(:user) { instance_double User }
 
+  let(:parent) { instance_double Question }
+
   let(:resource_params) { attributes_for(:answer) }
+
 
   context 'authentication required' do
     before { sign_in User }
 
     describe '#create' do
+      before { allow(Question).to receive(:find).with(resource_params[:question_id]).and_return(parent) }
+
       before do
-        allow(AnswerCreator).to receive(:new).with(resource_params) do
+        allow(AnswerCreator).to receive(:new).with(resource_params, parent) do
           double.tap { |answer_creator| allow(answer_creator).to receive(:create).and_return(answer) }
         end
       end
@@ -100,14 +103,16 @@ RSpec.describe AnswersController, type: :controller do
 
 
   describe '#index' do
-    let(:params) { attributes_for(:answer) }
+    let(:params) { { question_id: "1", answer: resource_params, action: "index" } }
 
     let(:collection) { double }
 
     before { allow(subject).to receive(:params).and_return(params) }
 
+    before { allow(Question).to receive(:find).with(params[:question_id]).and_return(parent) }
+
     before do
-      allow(AnswerSearcher).to receive(:new).with(params) do
+      allow(AnswerSearcher).to receive(:new).with(params, parent) do
         double.tap { |answer_searcher| allow(answer_searcher).to receive(:search).and_return(collection) }
       end
     end

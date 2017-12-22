@@ -1,20 +1,18 @@
 require 'rails_helper'
 RSpec.describe AnswerCreator do
-  subject { AnswerCreator.new params }
+  subject { AnswerCreator.new params, question }
+
+  let(:question) { instance_double(Question) }
 
   describe '#create' do
     context '#valid params were passed' do
-      let(:params) { { body: "answers body", question_id: "1" } }
+      let(:params) { attributes_for(:answer) }
 
       let(:answer) { instance_double(Answer, as_json: params, **params) }
 
       before do
-        allow(Question).to receive(:find).with("1") do
-          double.tap do |question|
-            allow(question).to receive(:answers) do
-              double.tap { |question_answers| allow(question_answers).to receive(:create!).with(params).and_return(answer) }
-            end
-          end
+        allow(question).to receive(:answers) do
+          double.tap { |question_answers| allow(question_answers).to receive(:create!).with(params).and_return(answer) }
         end
       end
 
@@ -25,15 +23,12 @@ RSpec.describe AnswerCreator do
     context '#invalid params were passed' do
       let(:answer) { Answer.new }
 
-      let(:params) { { body: " ", question_id: "1" } }
+      let(:params) { { } }
 
       before do
-        expect(Question).to receive(:find).with("1") do
-          double.tap do |question|
-            expect(question).to receive(:answers) do
-              double.tap { |question_answers| allow(question_answers).to receive(:create!).with(params).and_raise(ActiveRecord::RecordInvalid.new(answer)) }
-            end
-          end
+        allow(question).to receive(:answers) do
+          double.tap { |question_answers| allow(question_answers).to receive(:create!).with(params)
+                                                                 .and_raise(ActiveRecord::RecordInvalid.new(answer)) }
         end
       end
 

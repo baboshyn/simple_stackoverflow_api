@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe TokensController, type: :controller do
-  it { is_expected.to be_kind_of(Authenticatable) }
-
   it { is_expected.to be_an ApplicationController }
 
   describe '#create' do

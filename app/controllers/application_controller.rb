@@ -6,6 +6,6 @@ class ApplicationController < ActionController::API
   end
 
   rescue_from ActionController::ParameterMissing do
-    head 422
+    head 400
   end
 end

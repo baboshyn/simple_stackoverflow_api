@@ -1,8 +1,6 @@
 class AnswerSearcher
-  def initialize(params = {})
+  def initialize(params = {}, parent)
     @body = params[:body]
-
-    parent = Question.find(params[:question_id])
 
     @result = parent.answers
   end

@@ -1,8 +1,8 @@
 class AnswerCreator
-  def initialize(params = {})
+  def initialize(params = {}, parent)
     @params = params
 
-    @question = Question.find(params[:question_id])
+    @question = parent
   end
 
   def create

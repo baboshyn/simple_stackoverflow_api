@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe UsersController, type: :controller do
-  it { is_expected.to be_kind_of(Authenticatable) }
-
   it { is_expected.to be_an ApplicationController }
 
   let(:attrs) { attributes_for(:user) }
@@ -45,7 +43,7 @@ RSpec.describe UsersController, type: :controller do
     context '#parameter "user" was not passed' do
       before { process :create, method: :post, params: { " ": resource_params }, format: :json }
 
-      it { expect(response).to have_http_status 422 }
+      it { expect(response).to have_http_status 400 }
     end
   end
 end

@@ -4,7 +4,7 @@ class AnswersController < ApplicationController
   before_action :set_answer, only: [:update, :destroy]
 
   def create
-    answer = AnswerCreator.new(resource_params).create
+    answer = AnswerCreator.new(resource_params, parent).create
 
     if answer.valid?
       render json: answer, status: 201
@@ -14,7 +14,7 @@ class AnswersController < ApplicationController
   end
 
   def index
-    answers = AnswerSearcher.new(params).search
+    answers = AnswerSearcher.new(params, parent).search
 
     render json: answers
   end
@@ -38,6 +38,12 @@ class AnswersController < ApplicationController
   private
   def set_answer
     @answer ||= Answer.find(params[:id])
+  end
+
+  def parent
+    parent ||= Question.find(params[:question_id]) if params[:action] == "index"
+
+    parent ||= Question.find(resource_params[:question_id])
   end
 
   def resource_params

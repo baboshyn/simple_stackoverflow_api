@@ -2,19 +2,17 @@ require 'rails_helper'
 RSpec.describe AnswerSearcher do
   let(:result_all) {double}
 
-  subject { AnswerSearcher.new params }
+  let(:parent) { instance_double(Question) }
 
-  before do
-    allow(Question).to receive(:find).with(params[:question_id]) do
-      double.tap { |question| allow(question).to receive(:answers).and_return(result_all) }
-    end
-  end
+  subject { AnswerSearcher.new params, parent }
+
+  before { allow(parent).to receive(:answers).and_return(result_all) }
 
   describe '#search' do
     context '#searching answers on the question by body' do
       let(:result) { double }
 
-      let(:params) { { body: 'body', question_id: "1" } }
+      let(:params) { { body: 'body' } }
 
       before { allow(result_all).to receive(:where).with('body ILIKE?', "%body%").and_return(result) }
 
@@ -22,7 +20,7 @@ RSpec.describe AnswerSearcher do
     end
 
     context '#show all answers on the question' do
-      let(:params) { { question_id: "1" } }
+      let(:params) { {} }
 
       its(:search) { is_expected.to eq result_all }
     end
