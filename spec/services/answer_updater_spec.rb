@@ -10,7 +10,7 @@ RSpec.describe AnswerUpdater do
 
       before { allow(answer).to receive(:update!).with(params).and_return(answer) }
 
-      its(:update) { is_expected.to eq answer }
+      it('returns updated answer') { expect(subject.update).to eq answer }
     end
 
     context '#invalid params were passed' do
@@ -20,7 +20,7 @@ RSpec.describe AnswerUpdater do
 
       before { allow(answer).to receive(:update!).with(params).and_raise(ActiveRecord::RecordInvalid.new(answer)) }
 
-      its(:update) { is_expected.to eq answer }
+      it('returns errors') { expect(subject.update).to eq answer }
     end
   end
 end

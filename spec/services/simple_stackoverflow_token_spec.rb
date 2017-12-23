@@ -13,17 +13,17 @@ RSpec.describe SimpleStackoverflowToken do
     context 'token is expired' do
       let(:exp) { 1.day.ago }
 
-      it { expect(described_class.decode(token)).to eq false }
+      it('returns false') { expect(described_class.decode(token)).to eq false }
     end
 
     context 'token is invalid' do
       let(:token) { 'invalid_token' }
 
-      it { expect(described_class.decode(token)).to eq false }
+      it('returns false') { expect(described_class.decode(token)).to eq false }
     end
 
     context 'token is valid' do
-      it { expect(described_class.decode(token).first).to eq payload.stringify_keys }
+      it('decodes token') { expect(described_class.decode(token).first).to eq payload.stringify_keys }
     end
   end
 end

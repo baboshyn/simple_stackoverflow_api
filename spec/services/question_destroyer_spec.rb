@@ -9,6 +9,6 @@ RSpec.describe QuestionDestroyer do
   describe '#destroy' do
     before { expect(question).to receive(:destroy!) }
 
-    it { expect { subject.send :destroy }.to_not raise_error }
+    it('destroys question') { expect { subject.destroy }.to_not raise_error }
   end
 end

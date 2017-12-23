@@ -16,13 +16,13 @@ RSpec.describe AnswerSearcher do
 
       before { allow(result_all).to receive(:where).with('body ILIKE?', "%body%").and_return(result) }
 
-      its(:search) { is_expected.to eq result }
+      it('returns searched result') { expect(subject.search).to eq result }
     end
 
     context '#show all answers on the question' do
       let(:params) { {} }
 
-      its(:search) { is_expected.to eq result_all }
+      it('returns whole collection') { expect(subject.search).to eq result_all }
     end
   end
 end

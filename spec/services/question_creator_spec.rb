@@ -10,7 +10,7 @@ RSpec.describe QuestionCreator do
 
       before { allow(Question).to receive(:create!).with(params).and_return(question) }
 
-      its(:create) { is_expected.to eq question }
+      it('returns created question') { expect(subject.create).to eq question }
     end
 
     context '#invalid params were passed' do
@@ -20,7 +20,7 @@ RSpec.describe QuestionCreator do
 
       before { allow(Question).to receive(:create!).with(params).and_raise(ActiveRecord::RecordInvalid.new(question)) }
 
-      its(:create) { is_expected.to eq question }
+      it('returns errors') { expect(subject.create).to eq question }
     end
   end
 end

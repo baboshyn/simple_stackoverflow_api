@@ -10,7 +10,7 @@ RSpec.describe UserCreator do
 
       before { allow(User).to receive(:create!).with(params).and_return(user) }
 
-      its(:create) { is_expected.to eq user }
+      it('returns created user') { expect(subject.create).to eq user }
     end
 
     context '#invalid params were passed' do
@@ -20,7 +20,7 @@ RSpec.describe UserCreator do
 
       before { allow(User).to receive(:create!).with(params).and_raise(ActiveRecord::RecordInvalid.new(user)) }
 
-      its(:create) { is_expected.to eq user }
+      it('returns errors') { expect(subject.create).to eq user }
     end
   end
 end

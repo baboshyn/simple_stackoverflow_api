@@ -16,7 +16,7 @@ RSpec.describe AnswerCreator do
         end
       end
 
-      its(:create) { is_expected.to eq answer }
+      it('returns created answer') { expect(subject.create).to eq answer }
     end
 
 
@@ -32,7 +32,7 @@ RSpec.describe AnswerCreator do
         end
       end
 
-      its(:create) { is_expected.to eq answer }
+      it('returns errors') { expect(subject.create).to eq answer }
     end
   end
 end
