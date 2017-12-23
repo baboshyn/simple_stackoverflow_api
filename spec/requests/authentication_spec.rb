@@ -15,16 +15,18 @@ RSpec.describe 'Authentication', type: :request do
   before { get '/profile', params: {} , headers: headers }
 
   context 'with valid params' do
-    it { expect(response.body).to eq user_response.to_json }
+    it('returns authenticated user') { expect(response.body).to eq user_response.to_json }
+
+    it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
   end
 
   context 'with invalid params' do
     let(:token) { 'another_token' }
 
-    it { expect(response).to have_http_status 401 }
+    it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
 
-    it { expect(response.body).to eq "HTTP Token: Access denied.\n" }
+    it('returns "HTTP Token: Access denied.') { expect(response.body).to eq "HTTP Token: Access denied.\n" }
 
-    it { expect(response.header['WWW-Authenticate']).to eq "Token realm=\"Application\"" }
+    it('returns header "WWW-Authenticate"') { expect(response.header['WWW-Authenticate']).to eq "Token realm=\"Application\"" }
   end
 end
