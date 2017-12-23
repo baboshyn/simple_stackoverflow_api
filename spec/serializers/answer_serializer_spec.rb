@@ -5,5 +5,5 @@ RSpec.describe AnswerSerializer do
 
   let(:attributes) { subject.attributes.keys }
 
-  it { expect(attributes).to eq %i[id body] }
+  it('returns necessary attributes for Answer') { expect(attributes).to eq %i[id body] }
 end

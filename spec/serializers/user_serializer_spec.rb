@@ -5,5 +5,5 @@ RSpec.describe UserSerializer do
 
   let(:attributes) { subject.attributes.keys }
 
-  it { expect(attributes).to eq %i[id login email] }
+  it('returns necessary attributes for User') { expect(attributes).to eq %i[id login email] }
 end
