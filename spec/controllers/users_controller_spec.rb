@@ -21,9 +21,9 @@ RSpec.describe UsersController, type: :controller do
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 
-      it { expect(response.body).to eq user.to_json }
+      it('returns created user') { expect(response.body).to eq user.to_json }
 
-      it { expect(response).to have_http_status 201 }
+      it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
     end
 
     context 'parameters for user did not pass validation' do
@@ -35,15 +35,15 @@ RSpec.describe UsersController, type: :controller do
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 
-      it { expect(response.body).to eq errors.to_json }
+      it('returns errors') { expect(response.body).to eq errors.to_json }
 
-      it { expect(response).to have_http_status 422 }
+      it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
     end
 
     context 'parameter "user" was not passed' do
       before { process :create, method: :post, params: { " ": resource_params }, format: :json }
 
-      it { expect(response).to have_http_status 400 }
+      it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
     end
   end
 end

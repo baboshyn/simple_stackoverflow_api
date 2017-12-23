@@ -15,7 +15,7 @@ RSpec.describe TokensController, type: :controller do
 
       before { process :create, method: :post, params: params, format: :json }
 
-      it { expect(response).to have_http_status 404 }
+      it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
     end
 
     context 'user was foun by login' do
@@ -26,9 +26,9 @@ RSpec.describe TokensController, type: :controller do
 
         before { process :create, method: :post, params: params, format: :json }
 
-        it { expect(response.body).to eq ({ error: { message: 'Invalid password' } }).to_json }
+        it('returns errors') { expect(response.body).to eq ({ error: { message: 'Invalid password' } }).to_json }
 
-        it { expect(response).to have_http_status 422 }
+        it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
       end
 
       context 'password is valid' do
@@ -40,9 +40,9 @@ RSpec.describe TokensController, type: :controller do
 
         before { process :create, method: :post, params: params, format: :json }
 
-        it { expect(response.body).to eq ({ token: token }).to_json }
+        it('returns created token') { expect(response.body).to eq ({ token: token }).to_json }
 
-        it { expect(response).to have_http_status 201 }
+        it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
       end
     end
   end

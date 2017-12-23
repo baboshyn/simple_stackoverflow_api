@@ -32,9 +32,9 @@ RSpec.describe AnswersController, type: :controller do
 
           before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
-          it { expect(response.body).to eq answer.to_json }
+          it('returns created answer') { expect(response.body).to eq answer.to_json }
 
-          it { expect(response).to have_http_status 201 }
+          it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
         end
 
         context 'parameters for answer did not pass validation' do
@@ -46,15 +46,15 @@ RSpec.describe AnswersController, type: :controller do
 
           before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
-          it { expect(response.body).to eq errors.to_json }
+          it('returns errors') { expect(response.body).to eq errors.to_json }
 
-          it { expect(response).to have_http_status 422 }
+          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
         end
 
         context 'bad request' do
           before { process :create, method: :post, params: { " ": resource_params }, format: :json }
 
-          it { expect(response).to have_http_status 400 }
+          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
         end
       end
 
@@ -65,7 +65,7 @@ RSpec.describe AnswersController, type: :controller do
 
         before { process :create, method: :post, params: { answer: resource_params, format: :json } }
 
-        it { expect(response).to have_http_status 404 }
+        it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
       end
     end
 
@@ -85,9 +85,9 @@ RSpec.describe AnswersController, type: :controller do
 
             before { process :update, method: :patch, params: { id: 1, answer: resource_params }, format: :json }
 
-            it { expect(response.body).to eq answer.to_json }
+            it('returns updated answer') { expect(response.body).to eq answer.to_json }
 
-            it { expect(response).to have_http_status 200 }
+            it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
           end
 
           context 'parameters for answer did not pass validation'do
@@ -99,15 +99,15 @@ RSpec.describe AnswersController, type: :controller do
 
             before { process :update, method: :patch, params: { id: 1, answer: resource_params }, format: :json }
 
-            it { expect(response.body).to eq errors.to_json }
+            it('returns errors') { expect(response.body).to eq errors.to_json }
 
-            it { expect(response).to have_http_status 422 }
+            it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
           end
 
           context 'bad request' do
             before { process :update, method: :patch, params: {id: 1, " ": resource_params }, format: :json }
 
-            it { expect(response).to have_http_status 400 }
+            it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
           end
         end
 
@@ -116,7 +116,7 @@ RSpec.describe AnswersController, type: :controller do
 
           before { process :update, method: :patch, params: { id: 0, answer: resource_params }, format: :json }
 
-          it { expect(response).to have_http_status 404 }
+          it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
         end
       end
 
@@ -130,7 +130,7 @@ RSpec.describe AnswersController, type: :controller do
 
           before { process :destroy, method: :delete, params: { id: 1 }, format: :json }
 
-          it { expect(response).to have_http_status 204 }
+          it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
         end
 
         context 'answer was not found' do
@@ -138,7 +138,7 @@ RSpec.describe AnswersController, type: :controller do
 
           before { process :destroy, method: :delete, params: { id: 0 }, format: :json }
 
-          it { expect(response).to have_http_status 404 }
+          it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
         end
       end
     end
@@ -162,9 +162,9 @@ RSpec.describe AnswersController, type: :controller do
 
       before { process :index, method: :get, params: params, format: :json }
 
-      it { expect(response.body).to eq collection.to_json }
+      it('returns collection') { expect(response.body).to eq collection.to_json }
 
-      it { expect(response).to have_http_status 200 }
+      it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
     end
 
     context 'parent was not found' do
@@ -172,11 +172,7 @@ RSpec.describe AnswersController, type: :controller do
 
       before { process :index, method: :get, params: { question_id: 0, answer: resource_params, action: "index", format: :json } }
 
-      it { expect(response).to have_http_status 404 }
+      it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
     end
   end
 end
-
-
-
-
