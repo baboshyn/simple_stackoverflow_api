@@ -17,6 +17,10 @@ group :development, :test do
   gem 'pry-byebug'
 end
 
+group :test do
+  gem 'database_cleaner'
+end
+
 group :development do
 
 end
