@@ -12,10 +12,10 @@ RSpec.describe QuestionsController, type: :controller do
   let(:resource_params) { attributes_for(:question) }
 
 
-  context 'authentication required' do
-    before { sign_in User }
+  describe '#create' do
+    context 'user passed authentication' do
+      before { sign_in user }
 
-    describe '#create' do
       before do
         allow(QuestionCreator).to receive(:new).with(resource_params) do
           double.tap { |question_creator| allow(question_creator).to receive(:create).and_return(question) }
@@ -53,13 +53,23 @@ RSpec.describe QuestionsController, type: :controller do
       end
     end
 
+    context 'user did not pass authentication' do
+      before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
-    context 'actions for exact question' do
-      let(:question_id) { "1" }
+      it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+    end
+  end
 
-      before { allow(Question).to receive(:find).with(question_id).and_return(question) }
 
-      describe '#update' do
+  context 'actions for exact question' do
+    let(:question_id) { "1" }
+
+    before { allow(Question).to receive(:find).with(question_id).and_return(question) }
+
+    describe '#update' do
+      context 'user passed authentication' do
+        before { sign_in user }
+
         context 'question was found' do
           before do
             allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
@@ -107,7 +117,17 @@ RSpec.describe QuestionsController, type: :controller do
         end
       end
 
-      describe '#destroy' do
+      context 'user did not pass authentication' do
+        before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+        it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+      end
+    end
+
+    describe '#destroy' do
+      context 'user passed authentication' do
+        before { sign_in user }
+
         context 'question was found' do
           before do
             expect(QuestionDestroyer).to receive(:new).with(question) do
@@ -120,6 +140,7 @@ RSpec.describe QuestionsController, type: :controller do
           it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
         end
 
+
         context '#question was not found' do
           before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
 
@@ -129,25 +150,32 @@ RSpec.describe QuestionsController, type: :controller do
         end
       end
 
-      describe '#show' do
-        context 'question was found' do
-          before { process :show, method: :get, params: { id: question_id }, format: :json }
+      context 'user did not pass authentication' do
+        before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
 
-          it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+        it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+      end
+    end
 
-          it('returns searched question') { expect(response.body).to eq question.to_json }
-        end
+    describe '#show' do
+      context 'question was found' do
+        before { process :show, method: :get, params: { id: question_id }, format: :json }
 
-        context 'question was not found' do
-          before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+        it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
 
-          before { process :show, method: :get, params: {id: 0}, format: :json }
+        it('returns searched question') { expect(response.body).to eq question.to_json }
+      end
 
-          it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
-        end
+      context 'question was not found' do
+        before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+
+        before { process :show, method: :get, params: {id: 0}, format: :json }
+
+        it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
       end
     end
   end
+
 
   describe '#index' do
     let(:params) { attributes_for(:question) }

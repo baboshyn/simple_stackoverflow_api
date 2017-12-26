@@ -9,20 +9,20 @@ RSpec.describe AnswersController, type: :controller do
 
   let(:user) { instance_double User }
 
-  let(:parent) { instance_double Question }
+  let(:question) { instance_double Question }
 
   let(:resource_params) { attributes_for(:answer) }
 
 
-  context 'authentication required' do
-    before { sign_in User }
+  describe '#create' do
+    context 'user passed authentication' do
+      before { sign_in user }
 
-    describe '#create' do
       context 'parent was found' do
-        before { allow(Question).to receive(:find).with(resource_params[:question_id]).and_return(parent) }
+        before { allow(Question).to receive(:find).with(resource_params[:question_id]).and_return(question) }
 
         before do
-          allow(AnswerCreator).to receive(:new).with(resource_params, parent) do
+          allow(AnswerCreator).to receive(:new).with(resource_params, question) do
             double.tap { |answer_creator| allow(answer_creator).to receive(:create).and_return(answer) }
           end
         end
@@ -69,10 +69,20 @@ RSpec.describe AnswersController, type: :controller do
       end
     end
 
-    context 'answer must be found by id to perform this actions' do
-      before { allow(Answer).to receive(:find).with("1").and_return(answer) }
+    context 'user did not authentication' do
+      before { process :create, method: :post, params: { answer: resource_params, format: :json } }
 
-      describe '#update' do
+      it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+    end
+  end
+
+  context 'answer must be found by id to perform this actions' do
+    before { allow(Answer).to receive(:find).with("1").and_return(answer) }
+
+    describe '#update' do
+      context 'user passed authentication' do
+        before { sign_in user }
+
         context 'answer was found' do
           before do
             allow(AnswerUpdater).to receive(:new).with(answer, resource_params) do
@@ -108,7 +118,7 @@ RSpec.describe AnswersController, type: :controller do
             before { process :update, method: :patch, params: {id: 1, " ": resource_params }, format: :json }
 
             it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
-          end
+            end
         end
 
         context 'answer was not found' do
@@ -120,7 +130,17 @@ RSpec.describe AnswersController, type: :controller do
         end
       end
 
-      describe '#destroy' do
+      context 'user did not pass authentication' do
+        before { process :update, method: :patch, params: { id: 1, answer: resource_params }, format: :json }
+
+        it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+      end
+    end
+
+    describe '#destroy' do
+      context 'user passed authentication' do
+        before { sign_in user }
+
         context 'answer was found' do
           before do
             expect(AnswerDestroyer).to receive(:new).with(answer) do
@@ -141,6 +161,12 @@ RSpec.describe AnswersController, type: :controller do
           it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
         end
       end
+
+      context 'user did not pass authentication' do
+        before { process :destroy, method: :delete, params: { id: 1 }, format: :json }
+
+        it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+      end
     end
   end
 
@@ -152,10 +178,10 @@ RSpec.describe AnswersController, type: :controller do
 
       before { allow(subject).to receive(:params).and_return(params) }
 
-      before { allow(Question).to receive(:find).with(params[:question_id]).and_return(parent) }
+      before { allow(Question).to receive(:find).with(params[:question_id]).and_return(question) }
 
       before do
-        allow(AnswerSearcher).to receive(:new).with(params, parent) do
+        allow(AnswerSearcher).to receive(:new).with(params, question) do
           double.tap { |answer_searcher| allow(answer_searcher).to receive(:search).and_return(collection) }
         end
       end
