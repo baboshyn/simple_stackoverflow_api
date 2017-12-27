@@ -1,8 +1,8 @@
 class AnswerCreator
-  def initialize(params = {}, parent)
+  def initialize(params = {}, question)
     @params = params
 
-    @question = parent
+    @question = question
   end
 
   def create
