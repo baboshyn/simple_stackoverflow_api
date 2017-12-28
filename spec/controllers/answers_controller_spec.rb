@@ -13,6 +13,10 @@ RSpec.describe AnswersController, type: :controller do
 
   let(:resource_params) { attributes_for(:answer) }
 
+  let(:answer_id) { "1" }
+
+  before { allow(Answer).to receive(:find).with(answer_id).and_return(answer) }
+
   describe '#create' do
     context 'user authenticated' do
       before { sign_in user }
@@ -106,11 +110,6 @@ RSpec.describe AnswersController, type: :controller do
       it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
     end
   end
-
-
-  let(:answer_id) { "1" }
-
-  before { allow(Answer).to receive(:find).with(answer_id).and_return(answer) }
 
   describe '#update' do
     context 'user authenticated' do
