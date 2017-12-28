@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe TokensController, type: :controller do
   it { is_expected.to be_an ApplicationController }
 
-  describe '#create' do
+  describe 'POST #create' do
     let(:params) { { login: { email: 'test', password: 'test' } } }
 
     let(:resource_params) { params[:login] }

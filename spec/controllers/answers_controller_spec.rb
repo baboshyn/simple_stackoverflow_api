@@ -17,7 +17,7 @@ RSpec.describe AnswersController, type: :controller do
 
   before { allow(Answer).to receive(:find).with(answer_id).and_return(answer) }
 
-  describe '#create' do
+  describe 'POST #create' do
     context 'user authenticated' do
       before { sign_in user }
 
@@ -79,7 +79,7 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
-  describe '#index' do
+  describe 'GET #index' do
     context 'question was found' do
       let(:params) { { question_id: "1", answer: resource_params } }
 
@@ -111,7 +111,7 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
-  describe '#update' do
+  describe 'PATCH #update' do
     context 'user authenticated' do
       before { sign_in user }
 
@@ -169,7 +169,7 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
-  describe '#destroy' do
+  describe 'DELETE #destroy' do
     context 'user authenticated' do
       before { sign_in user }
 

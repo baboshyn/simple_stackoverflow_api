@@ -7,7 +7,7 @@ RSpec.describe UsersController, type: :controller do
 
   let(:user) { instance_double(User, id: 1, as_json: attrs, **attrs) }
 
-  describe '#create' do
+  describe 'POST #create' do
     let(:resource_params) { attributes_for(:user) }
 
     before do

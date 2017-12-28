@@ -11,8 +11,12 @@ RSpec.describe QuestionsController, type: :controller do
 
   let(:resource_params) { attributes_for(:question) }
 
+  let(:question_id) { "1" }
 
-  describe '#create' do
+  before { allow(Question).to receive(:find).with(question_id).and_return(question) }
+
+
+  describe 'POST #create' do
     context 'user authenticated' do
       before { sign_in user }
 
@@ -61,123 +65,116 @@ RSpec.describe QuestionsController, type: :controller do
   end
 
 
-  context 'actions for exact question' do
-    let(:question_id) { "1" }
+  describe 'PATCH #update' do
+    context 'user authenticated' do
+      before { sign_in user }
 
-    before { allow(Question).to receive(:find).with(question_id).and_return(question) }
-
-    describe '#update' do
-      context 'user authenticated' do
-        before { sign_in user }
-
-        context 'question was found' do
-          before do
-            allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
-              double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
-            end
-          end
-
-          context 'parameters for question passed validation' do
-            before { allow(question).to receive(:valid?).and_return(true) }
-
-            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
-
-            it('updated question') { expect(response.body).to eq question.to_json }
-
-            it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
-          end
-
-          context 'parameters for question did not pass validation' do
-            let(:errors) { instance_double(ActiveModel::Errors) }
-
-            before { allow(question).to receive(:valid?).and_return(false) }
-
-            before { allow(question).to receive(:errors).and_return(errors) }
-
-            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
-
-            it('returns errors') { expect(response.body).to eq errors.to_json }
-
-            it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
-          end
-
-          context 'bad request was sent' do
-            before { process :update, method: :patch, params: {id: question_id, " ": resource_params }, format: :json }
-
-            it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
-          end
-        end
-
-        context 'question was not found' do
-          before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
-
-          before { process :update, method: :patch, params: {id: 0, question: resource_params }, format: :json }
-
-          it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
-        end
-      end
-
-      context 'user not authenticated' do
-        before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
-
-        it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
-      end
-    end
-
-    describe '#destroy' do
-      context 'user authenticated' do
-        before { sign_in user }
-
-        context 'question was found' do
-          before do
-            expect(QuestionDestroyer).to receive(:new).with(question) do
-              double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
-            end
-          end
-
-          before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
-
-          it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
-        end
-
-
-        context '#question was not found' do
-          before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
-
-          before { process :destroy, method: :delete, params: {id: 0}, format: :json }
-
-          it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
-        end
-      end
-
-      context 'user not authencticated' do
-        before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
-
-        it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
-      end
-    end
-
-    describe '#show' do
       context 'question was found' do
-        before { process :show, method: :get, params: { id: question_id }, format: :json }
+        before do
+          allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
+            double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
+          end
+        end
 
-        it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+        context 'parameters for question passed validation' do
+          before { allow(question).to receive(:valid?).and_return(true) }
 
-        it('returns searched question') { expect(response.body).to eq question.to_json }
+          before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+          it('updated question') { expect(response.body).to eq question.to_json }
+
+          it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+        end
+
+        context 'parameters for question did not pass validation' do
+          let(:errors) { instance_double(ActiveModel::Errors) }
+
+          before { allow(question).to receive(:valid?).and_return(false) }
+
+          before { allow(question).to receive(:errors).and_return(errors) }
+
+          before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+          it('returns errors') { expect(response.body).to eq errors.to_json }
+
+          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+        end
+
+        context 'bad request was sent' do
+          before { process :update, method: :patch, params: {id: question_id, " ": resource_params }, format: :json }
+
+          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+        end
       end
 
       context 'question was not found' do
         before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
 
-        before { process :show, method: :get, params: {id: 0}, format: :json }
+        before { process :update, method: :patch, params: {id: 0, question: resource_params }, format: :json }
 
         it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
       end
     end
+
+    context 'user not authenticated' do
+      before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+      it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+    end
   end
 
+  describe 'DELETE #destroy' do
+    context 'user authenticated' do
+      before { sign_in user }
 
-  describe '#index' do
+      context 'question was found' do
+        before do
+          expect(QuestionDestroyer).to receive(:new).with(question) do
+            double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
+          end
+        end
+
+        before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
+
+        it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
+      end
+
+
+      context '#question was not found' do
+        before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+
+        before { process :destroy, method: :delete, params: {id: 0}, format: :json }
+
+        it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
+      end
+    end
+
+    context 'user not authencticated' do
+      before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
+
+      it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+    end
+  end
+
+  describe 'GET #show' do
+    context 'question was found' do
+      before { process :show, method: :get, params: { id: question_id }, format: :json }
+
+      it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+
+      it('returns searched question') { expect(response.body).to eq question.to_json }
+    end
+
+    context 'question was not found' do
+      before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+
+      before { process :show, method: :get, params: {id: 0}, format: :json }
+
+      it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
+    end
+  end
+
+  describe 'GET #index' do
     let(:params) { attributes_for(:question) }
 
     let(:collection) { double }

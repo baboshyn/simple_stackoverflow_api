@@ -5,7 +5,7 @@ RSpec.describe ProfilesController, type: :controller do
 
   let(:user) { instance_double User }
 
-  describe '#show' do
+  describe 'GET #show' do
     context 'user authenticated' do
       before { sign_in user }
 
