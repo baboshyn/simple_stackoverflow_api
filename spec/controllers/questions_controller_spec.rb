@@ -13,7 +13,7 @@ RSpec.describe QuestionsController, type: :controller do
 
 
   describe '#create' do
-    context 'user passed authentication' do
+    context 'user authenticated' do
       before { sign_in user }
 
       before do
@@ -46,14 +46,14 @@ RSpec.describe QuestionsController, type: :controller do
         it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
       end
 
-      context 'bad request' do
+      context 'bad request was sent' do
         before { process :create, method: :post, params: { " ": resource_params }, format: :json }
 
         it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
       end
     end
 
-    context 'user did not pass authentication' do
+    context 'user not authenticated' do
       before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
       it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
@@ -67,7 +67,7 @@ RSpec.describe QuestionsController, type: :controller do
     before { allow(Question).to receive(:find).with(question_id).and_return(question) }
 
     describe '#update' do
-      context 'user passed authentication' do
+      context 'user authenticated' do
         before { sign_in user }
 
         context 'question was found' do
@@ -101,7 +101,7 @@ RSpec.describe QuestionsController, type: :controller do
             it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
           end
 
-          context 'bad request' do
+          context 'bad request was sent' do
             before { process :update, method: :patch, params: {id: question_id, " ": resource_params }, format: :json }
 
             it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
@@ -117,7 +117,7 @@ RSpec.describe QuestionsController, type: :controller do
         end
       end
 
-      context 'user did not pass authentication' do
+      context 'user not authenticated' do
         before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
 
         it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
@@ -125,7 +125,7 @@ RSpec.describe QuestionsController, type: :controller do
     end
 
     describe '#destroy' do
-      context 'user passed authentication' do
+      context 'user authenticated' do
         before { sign_in user }
 
         context 'question was found' do
@@ -150,7 +150,7 @@ RSpec.describe QuestionsController, type: :controller do
         end
       end
 
-      context 'user did not pass authentication' do
+      context 'user not authencticated' do
         before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
 
         it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }

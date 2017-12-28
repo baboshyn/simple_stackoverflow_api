@@ -6,7 +6,7 @@ RSpec.describe ProfilesController, type: :controller do
   let(:user) { instance_double User }
 
   describe '#show' do
-    context 'user passed authentication' do
+    context 'user authenticated' do
       before { sign_in user }
 
       before { process :show, method: :get, format: :json }
@@ -16,7 +16,7 @@ RSpec.describe ProfilesController, type: :controller do
       it('returns profile') { expect(response.body).to eq user.to_json }
     end
 
-    context 'user did not pass authentication' do
+    context 'user not authenticated' do
       before { process :show, method: :get, format: :json }
 
       it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }

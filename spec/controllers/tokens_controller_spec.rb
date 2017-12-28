@@ -18,7 +18,7 @@ RSpec.describe TokensController, type: :controller do
       it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
     end
 
-    context 'user was foun by login' do
+    context 'user was found by login' do
       before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
 
       context 'password is not valid' do
@@ -43,6 +43,12 @@ RSpec.describe TokensController, type: :controller do
         it('returns created token') { expect(response.body).to eq ({ token: token }).to_json }
 
         it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
+      end
+
+      context 'bad request was sent' do
+        before { process :create, method: :post, params: {' ': resource_params}, format: :json }
+
+        it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
       end
     end
   end
