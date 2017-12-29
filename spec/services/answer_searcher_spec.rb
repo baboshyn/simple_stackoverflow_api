@@ -9,7 +9,7 @@ RSpec.describe AnswerSearcher do
   before { allow(parent).to receive(:answers).and_return(result_all) }
 
   describe '#search' do
-    context '#searching answers on the question by body' do
+    context 'searching answers on the question by body' do
       let(:result) { double }
 
       let(:params) { { body: 'body' } }
@@ -19,7 +19,7 @@ RSpec.describe AnswerSearcher do
       it('returns searched result') { expect(subject.search).to eq result }
     end
 
-    context '#show all answers on the question' do
+    context 'show all answers on the question' do
       let(:params) { {} }
 
       it('returns whole collection') { expect(subject.search).to eq result_all }

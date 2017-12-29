@@ -8,7 +8,6 @@ RSpec.describe SimpleStackoverflowToken do
 
   let(:token) { described_class.encode(payload) }
 
-
   describe '#decode' do
     context 'token is expired' do
       let(:exp) { 1.day.ago }

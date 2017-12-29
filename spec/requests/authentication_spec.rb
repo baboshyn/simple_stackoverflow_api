@@ -2,7 +2,7 @@ require 'acceptance_helper'
 
 RSpec.describe 'Authentication', type: :request do
 
-  let(:user) { FactoryBot.create(:user, attrs) }
+  let(:user) { create(:user, attrs) }
 
   let(:attrs) { { login: 'test', email: 'test@test.com' } }
 

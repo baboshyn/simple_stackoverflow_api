@@ -15,7 +15,6 @@ RSpec.describe QuestionsController, type: :controller do
 
   before { allow(Question).to receive(:find).with(question_id).and_return(question) }
 
-
   describe 'POST #create' do
     context 'user authenticated' do
       before { sign_in user }
@@ -64,7 +63,6 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
-
   describe 'PATCH #update' do
     context 'user authenticated' do
       before { sign_in user }
@@ -101,7 +99,7 @@ RSpec.describe QuestionsController, type: :controller do
         end
 
         context 'bad request was sent' do
-          before { process :update, method: :patch, params: {id: question_id, " ": resource_params }, format: :json }
+          before { process :update, method: :patch, params: { id: question_id, " ": resource_params }, format: :json }
 
           it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
         end
@@ -110,7 +108,7 @@ RSpec.describe QuestionsController, type: :controller do
       context 'question was not found' do
         before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
 
-        before { process :update, method: :patch, params: {id: 0, question: resource_params }, format: :json }
+        before { process :update, method: :patch, params: { id: 0, question: resource_params }, format: :json }
 
         it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
       end
@@ -139,8 +137,7 @@ RSpec.describe QuestionsController, type: :controller do
         it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
       end
 
-
-      context '#question was not found' do
+      context 'question was not found' do
         before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
 
         before { process :destroy, method: :delete, params: {id: 0}, format: :json }

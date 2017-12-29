@@ -5,7 +5,7 @@ RSpec.describe AnswerCreator do
   let(:question) { instance_double(Question) }
 
   describe '#create' do
-    context '#valid params were passed' do
+    context 'valid params were passed' do
       let(:params) { attributes_for(:answer) }
 
       let(:answer) { instance_double(Answer, as_json: params, **params) }
@@ -19,8 +19,7 @@ RSpec.describe AnswerCreator do
       it('returns created answer') { expect(subject.create).to eq answer }
     end
 
-
-    context '#invalid params were passed' do
+    context 'invalid params were passed' do
       let(:answer) { Answer.new }
 
       let(:params) { { } }

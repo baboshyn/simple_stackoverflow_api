@@ -6,6 +6,8 @@ require "active_model/railtie"
 require "active_record/railtie"
 require "action_controller/railtie"
 
+require './app/middleware/catch_json_parse_errors.rb'
+
 Bundler.require(*Rails.groups)
 
 module SimpleStackoverflowApi
@@ -19,8 +21,6 @@ module SimpleStackoverflowApi
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
-    config.eager_load_paths << config.root.join('middleware').to_s
-
-    config.middleware.use 'CatchJsonParseErrors'
+    config.middleware.insert_before Rack::Head, CatchJsonParseErrors
   end
 end

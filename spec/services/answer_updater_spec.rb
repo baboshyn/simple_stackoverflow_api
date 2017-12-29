@@ -3,7 +3,7 @@ RSpec.describe AnswerUpdater do
   subject { AnswerUpdater.new(answer, params) }
 
   describe '#update' do
-    context '#valid params were passed' do
+    context 'valid params were passed' do
       let(:params) { attributes_for(:answer) }
 
       let(:answer) { instance_double Answer }
@@ -13,7 +13,7 @@ RSpec.describe AnswerUpdater do
       it('returns updated answer') { expect(subject.update).to eq answer }
     end
 
-    context '#invalid params were passed' do
+    context 'invalid params were passed' do
       let(:answer) { Answer.new }
 
       let(:params) { {} }

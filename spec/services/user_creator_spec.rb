@@ -3,7 +3,7 @@ RSpec.describe UserCreator do
   subject { UserCreator.new params }
 
   describe '#create' do
-    context '#valid params were passed' do
+    context 'valid params were passed' do
       let(:user) { instance_double(User, as_json: params, **params) }
 
       let(:params) { attributes_for(:user) }
@@ -13,7 +13,7 @@ RSpec.describe UserCreator do
       it('returns created user') { expect(subject.create).to eq user }
     end
 
-    context '#invalid params were passed' do
+    context 'invalid params were passed' do
       let(:user) { User.new }
 
       let(:params) { {} }

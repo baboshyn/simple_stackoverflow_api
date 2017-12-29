@@ -2,9 +2,7 @@ require 'rails_helper'
 RSpec.describe AnswerDestroyer do
   let(:answer) { instance_double Answer }
 
-  let(:params) { answer }
-
-  subject { AnswerDestroyer.new params }
+  subject { AnswerDestroyer.new answer }
 
   describe '#destroy' do
     before { expect(answer).to receive(:destroy!) }
