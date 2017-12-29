@@ -13,7 +13,7 @@ RSpec.describe AnswersController, type: :controller do
 
   let(:resource_params) { attributes_for(:answer) }
 
-  let(:answer_id) { "1" }
+  let(:answer_id) { '1' }
 
   before { allow(Answer).to receive(:find).with(answer_id).and_return(answer) }
 
@@ -55,16 +55,16 @@ RSpec.describe AnswersController, type: :controller do
         end
 
         context 'bad request was sent' do
-          before { process :create, method: :post, params: { " ": resource_params }, format: :json }
+          before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
 
           it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
         end
       end
 
       context 'question was not found' do
-        let(:resource_params) { { question_id: "0", body: "body" } }
+        let(:resource_params) { { question_id: '0', body: "body" } }
 
-        before { allow(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+        before { allow(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
         before { process :create, method: :post, params: { answer: resource_params, format: :json } }
 
@@ -81,7 +81,7 @@ RSpec.describe AnswersController, type: :controller do
 
   describe 'GET #index' do
     context 'question was found' do
-      let(:params) { { question_id: "1", answer: resource_params } }
+      let(:params) { { question_id: '1', answer: resource_params } }
 
       let(:collection) { double }
 
@@ -103,7 +103,7 @@ RSpec.describe AnswersController, type: :controller do
     end
 
     context 'question was not found' do
-      before { allow(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+      before { allow(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
       before { process :index, method: :get, params: { question_id: 0, answer: resource_params, format: :json } }
 
@@ -147,14 +147,14 @@ RSpec.describe AnswersController, type: :controller do
         end
 
         context 'bad request was sent' do
-          before { process :update, method: :patch, params: {id: answer_id, " ": resource_params }, format: :json }
+          before { process :update, method: :patch, params: {id: answer_id, ' ': resource_params }, format: :json }
 
           it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
         end
       end
 
       context 'answer was not found' do
-        before { expect(Answer).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+        before { expect(Answer).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
         before { process :update, method: :patch, params: { id: 0, answer: resource_params }, format: :json }
 
@@ -186,7 +186,7 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       context 'answer was not found' do
-        before { expect(Answer).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+        before { expect(Answer).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
         before { process :destroy, method: :delete, params: { id: 0 }, format: :json }
 

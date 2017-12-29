@@ -41,7 +41,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context 'bad request was sent' do
-      before { process :create, method: :post, params: { " ": resource_params }, format: :json }
+      before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
 
       it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
     end
