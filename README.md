@@ -1,5 +1,6 @@
 # README
 
+[Documentation](https://documenter.getpostman.com/view/3252235/simple_stackoverflow_api/7LnBip9)
 
 * Ruby version 2.3.1
 * Rails version 5.0.6

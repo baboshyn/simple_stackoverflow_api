@@ -1,8 +1,12 @@
 class AnswersController < ApplicationController
-  before_action :set_answer, only: [:show, :update, :destroy]
+  skip_before_action :authenticate, only: :index
+
+  before_action :set_answer, only: [:update, :destroy]
+
+  before_action :set_question, only: [:create, :index]
 
   def create
-    answer = AnswersCreator.new(resource_params).create
+    answer = AnswerCreator.new(resource_params, @question).create
 
     if answer.valid?
       render json: answer, status: 201
@@ -11,28 +15,24 @@ class AnswersController < ApplicationController
     end
   end
 
-  def show
-    render json: @answer
-  end
-
   def index
-    answers = AnswersSearcher.new(params).search
+    answers = AnswerSearcher.new(params, @question).search
 
     render json: answers
   end
 
   def update
-    answer = AnswersUpdater.new(@answer, resource_params).update
+    answer = AnswerUpdater.new(@answer, resource_params).update
 
     if answer.valid?
-      render json: answer, status: 200
+      render json: answer
     else
       render json: answer.errors, status: 422
     end
   end
 
   def destroy
-    AnswersDestroyer.new(@answer).destroy
+    AnswerDestroyer.new(@answer).destroy
 
     head 204
   end
@@ -42,7 +42,11 @@ class AnswersController < ApplicationController
     @answer ||= Answer.find(params[:id])
   end
 
+  def set_question
+    @question = Question.find(params[:question_id] || resource_params[:question_id])
+  end
+
   def resource_params
-    params.require(:answer).permit(:body, :question_id)
+    params.require(:answer).permit(:body, :question_id).to_h
   end
 end

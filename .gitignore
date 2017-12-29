@@ -18,8 +18,11 @@
 
 database.yml
 secrets.yml
+coverage
 
-schema.rb
+db/schema.rb
+
+.DS_Store
 
 .ruby-gemset
 .ruby-version

@@ -1,8 +1,10 @@
 class QuestionsController < ApplicationController
+  skip_before_action :authenticate, only: [:show, :index]
+
   before_action :set_question, only: [:show, :update, :destroy]
 
   def create
-    question = QuestionsCreator.new(resource_params).create
+    question = QuestionCreator.new(resource_params).create
 
     if question.valid?
       render json: question, status: 201
@@ -16,23 +18,23 @@ class QuestionsController < ApplicationController
   end
 
   def index
-    questions = QuestionsSearcher.new(params).search
+    questions = QuestionSearcher.new(params).search
 
     render json: questions
   end
 
   def update
-    question = QuestionsUpdater.new(@question, resource_params).update
+    question = QuestionUpdater.new(@question, resource_params).update
 
     if question.valid?
-      render json: question, status: 200
+      render json: question
     else
       render json: question.errors, status: 422
     end
   end
 
   def destroy
-    QuestionsDestroyer.new(@question).destroy
+    QuestionDestroyer.new(@question).destroy
 
     head 204
   end
@@ -43,6 +45,6 @@ class QuestionsController < ApplicationController
   end
 
   def resource_params
-    params.require(:question).permit(:title, :body)
+    params.require(:question).permit(:title, :body).to_h
   end
 end

@@ -5,8 +5,12 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-puts "Create #{ 4 } questions"
-questions = FactoryGirl.create_list :question, 4
+puts 'Create 4 questions'
+questions = FactoryBot.create_list :question, 4
 
-puts "Create #{ 4 } answers"
-answers = FactoryGirl.create_list :answer, 4
+puts 'Create 4 answers'
+answers = FactoryBot.create_list :answer, 4
+
+puts 'Create 4 users'
+user = FactoryBot.create_list :user, 4
+
