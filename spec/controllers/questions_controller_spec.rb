@@ -106,7 +106,7 @@ RSpec.describe QuestionsController, type: :controller do
       end
 
       context 'question was not found' do
-        before { expect(Question).to receive(:find).with("0").and_raise ActiveRecord::RecordNotFound }
+        before { expect(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
         before { process :update, method: :patch, params: { id: 0, question: resource_params }, format: :json }
 

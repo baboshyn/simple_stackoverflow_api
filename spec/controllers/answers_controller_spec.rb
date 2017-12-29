@@ -62,7 +62,7 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       context 'question was not found' do
-        let(:resource_params) { { question_id: '0', body: "body" } }
+        let(:resource_params) { { question_id: '0', body: 'body' } }
 
         before { allow(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
