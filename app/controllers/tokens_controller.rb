@@ -9,7 +9,7 @@ class TokensController < ApplicationController
 
       render json: { token: token }, status: 201
     else
-      render json: { error: { message: 'Invalid password' } }, status: 422
+      render json: { errors: { password: ['Invalid password'] } }, status: 422
     end
   end
 

@@ -26,7 +26,7 @@ RSpec.describe TokensController, type: :controller do
 
         before { process :create, method: :post, params: params, format: :json }
 
-        it('returns errors') { expect(response.body).to eq ({ error: { message: 'Invalid password' } }).to_json }
+        it('returns errors') { expect(response.body).to eq ({ errors: { password: ['Invalid password'] } }).to_json }
 
         it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
       end
