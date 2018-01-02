@@ -43,7 +43,7 @@ RSpec.describe UsersController, type: :controller do
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 
-      it('returns created user') { expect(response.body).to eq errors.to_json }
+      it('returns errors') { expect(response.body).to eq errors.to_json }
 
       it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
     end

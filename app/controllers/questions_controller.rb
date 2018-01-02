@@ -4,13 +4,10 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
 
   def create
-    question = QuestionCreator.new(resource_params).create
-
-    if question.valid?
-      render json: question, status: 201
-    else
-      render json: question.errors, status: 422
-    end
+    QuestionCreator.new(resource_params)
+      .on(:succeeded) { |resource| render json: resource, status: 201 }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def show
@@ -24,13 +21,10 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    question = QuestionUpdater.new(@question, resource_params).update
-
-    if question.valid?
-      render json: question
-    else
-      render json: question.errors, status: 422
-    end
+    QuestionUpdater.new(@question, resource_params)
+      .on(:succeeded) { |resource| render json: resource }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def destroy

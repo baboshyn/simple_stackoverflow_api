@@ -19,14 +19,18 @@ RSpec.describe QuestionsController, type: :controller do
     context 'user authenticated' do
       before { sign_in user }
 
-      before do
-        allow(QuestionCreator).to receive(:new).with(resource_params) do
-          double.tap { |question_creator| allow(question_creator).to receive(:create).and_return(question) }
-        end
-      end
+      let(:creator) { QuestionCreator.new(resource_params) }
 
-      context 'parameters for question passed validation'do
-        before { allow(question).to receive(:valid?).and_return(true) }
+      context 'new question was created' do
+        before { allow(QuestionCreator).to receive(:new).and_return(creator) }
+
+        before { expect(creator).to receive(:on).twice.and_call_original }
+
+        before do
+          expect(creator).to receive(:call) do
+            creator.send(:broadcast, :succeeded, question)
+          end
+        end
 
         before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
@@ -35,12 +39,18 @@ RSpec.describe QuestionsController, type: :controller do
         it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
       end
 
-      context 'parameters for question did not pass validation'do
+      context 'new question was not created' do
         let(:errors) { instance_double(ActiveModel::Errors) }
 
-        before { allow(question).to receive(:valid?).and_return(false) }
+        before { allow(QuestionCreator).to receive(:new).and_return(creator) }
 
-        before { allow(question).to receive(:errors).and_return(errors) }
+        before { expect(creator).to receive(:on).twice.and_call_original }
+
+        before do
+          expect(creator).to receive(:call) do
+            creator.send(:broadcast, :failed, errors)
+          end
+        end
 
         before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
@@ -68,35 +78,45 @@ RSpec.describe QuestionsController, type: :controller do
       before { sign_in user }
 
       context 'question was found' do
-        before do
-          allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
-            double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
-          end
-        end
+        let(:updater) { QuestionUpdater.new(resource_params, question) }
 
-        context 'parameters for question passed validation' do
-          before { allow(question).to receive(:valid?).and_return(true) }
+        context 'question was updated' do
+          before { allow(QuestionUpdater).to receive(:new).and_return(updater) }
+
+          before { expect(updater).to receive(:on).twice.and_call_original }
+
+          before do
+            expect(updater).to receive(:call) do
+              updater.send(:broadcast, :succeeded, question)
+            end
+          end
 
           before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
 
-          it('updated question') { expect(response.body).to eq question.to_json }
+          it('returns updated question') { expect(response.body).to eq question.to_json }
 
           it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
         end
 
-        context 'parameters for question did not pass validation' do
-          let(:errors) { instance_double(ActiveModel::Errors) }
+      context 'question was not updated' do
+        let(:errors) { instance_double(ActiveModel::Errors) }
 
-          before { allow(question).to receive(:valid?).and_return(false) }
+        before { allow(QuestionUpdater).to receive(:new).and_return(updater) }
 
-          before { allow(question).to receive(:errors).and_return(errors) }
+        before { expect(updater).to receive(:on).twice.and_call_original }
 
-          before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
-
-          it('returns errors') { expect(response.body).to eq errors.to_json }
-
-          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+        before do
+          expect(updater).to receive(:call) do
+            updater.send(:broadcast, :failed, errors)
+          end
         end
+
+        before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+        it('returns errors') { expect(response.body).to eq errors.to_json }
+
+        it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+      end
 
         context 'bad request was sent' do
           before { process :update, method: :patch, params: { id: question_id, ' ': resource_params }, format: :json }
