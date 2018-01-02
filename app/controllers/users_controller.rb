@@ -2,13 +2,10 @@ class UsersController < ApplicationController
   skip_before_action :authenticate, only: [:create]
 
   def create
-    user = UserCreator.new(resource_params).create
-
-    if user.valid?
-      render json: user, status: 201
-    else
-      render json: user.errors, status: 422
-    end
+    UserCreator.new(resource_params).call
+    .on(:succeeded) { |resource| render json: resource, status: 201 }
+    .on(:failed) { |errors| render json: errors, status: 422 }
+    .call
   end
 
   private

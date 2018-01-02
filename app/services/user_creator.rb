@@ -1,12 +1,9 @@
-class UserCreator
+class UserCreator < ServicesHandler
   def initialize(params = {})
     @params = params
   end
 
-  def create
-    User.create!(@params)
-
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+  def action
+    @resource = User.create(@params)
   end
 end
