@@ -6,6 +6,7 @@ gem 'puma'
 gem 'active_model_serializers'
 gem 'bcrypt'
 gem 'jwt'
+gem 'wisper'
 
 group :development, :test do
   gem 'rspec-rails'
