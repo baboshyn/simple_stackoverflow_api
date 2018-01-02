@@ -1,26 +1,34 @@
 require 'rails_helper'
 RSpec.describe UserCreator do
+  it { is_expected.to be_a ServicesHandler }
+
+  let(:user) { instance_double(User, as_json: params, **params) }
+
+  let(:params) { attributes_for(:user) }
+
   subject { UserCreator.new params }
 
-  describe '#create' do
+  describe '#call' do
+    before { allow(User).to receive(:create).with(params).and_return(user) }
+
     context 'valid params were passed' do
-      let(:user) { instance_double(User, as_json: params, **params) }
+      before { allow(user).to receive(:valid?).and_return(true) }
 
-      let(:params) { attributes_for(:user) }
+      before { expect(subject).to receive(:broadcast).with(:succeeded, user) }
 
-      before { allow(User).to receive(:create!).with(params).and_return(user) }
-
-      it('returns created user') { expect(subject.create).to eq user }
+      it('broadcasts created user') { expect { subject.call }.to_not raise_error }
     end
 
     context 'invalid params were passed' do
-      let(:user) { User.new }
+      let(:errors) { instance_double(ActiveModel::Errors) }
 
-      let(:params) { {} }
+      before { allow(user).to receive(:errors).and_return(errors) }
 
-      before { allow(User).to receive(:create!).with(params).and_raise(ActiveRecord::RecordInvalid.new(user)) }
+      before { allow(user).to receive(:valid?).and_return(false) }
 
-      it('returns errors') { expect(subject.create).to eq user }
+      before { expect(subject).to receive(:broadcast).with(:failed, errors) }
+
+      it('broadcasts user.errors') { expect { subject.call }.to_not raise_error }
     end
   end
 end

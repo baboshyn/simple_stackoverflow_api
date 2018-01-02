@@ -3,7 +3,9 @@ class UserCreator < ServicesHandler
     @params = params
   end
 
-  def action
+  def call
     @resource = User.create(@params)
+
+    super
   end
 end
