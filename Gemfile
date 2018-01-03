@@ -7,6 +7,7 @@ gem 'active_model_serializers'
 gem 'bcrypt'
 gem 'jwt'
 gem 'wisper'
+gem 'pundit'
 
 group :development, :test do
   gem 'rspec-rails'
