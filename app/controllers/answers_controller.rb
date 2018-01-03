@@ -6,13 +6,10 @@ class AnswersController < ApplicationController
   before_action :set_question, only: [:create, :index]
 
   def create
-    answer = AnswerCreator.new(resource_params, @question).create
-
-    if answer.valid?
-      render json: answer, status: 201
-    else
-      render json: answer.errors, status: 422
-    end
+    AnswerCreator.new(resource_params, @question)
+      .on(:succeeded) { |resource| render json: resource, status: 201 }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def index
@@ -22,13 +19,10 @@ class AnswersController < ApplicationController
   end
 
   def update
-    answer = AnswerUpdater.new(@answer, resource_params).update
-
-    if answer.valid?
-      render json: answer
-    else
-      render json: answer.errors, status: 422
-    end
+    AnswerUpdater.new(@answer, resource_params)
+      .on(:succeeded) { |resource| render json: resource }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def destroy

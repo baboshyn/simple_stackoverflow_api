@@ -1,14 +1,13 @@
-class AnswerCreator
+class AnswerCreator < ServicesHandler
   def initialize(params = {}, question)
     @params = params
 
     @question = question
   end
 
-  def create
-    @question.answers.create!(@params)
+  def call
+    @resource = @question.answers.create(@params)
 
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+    super
   end
 end

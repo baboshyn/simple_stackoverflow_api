@@ -5,7 +5,6 @@ class QuestionUpdater < ServicesHandler
     @params = params
   end
 
-
   def call
     @resource.update(@params)
 

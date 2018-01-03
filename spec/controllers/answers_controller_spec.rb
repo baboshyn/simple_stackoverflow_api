@@ -24,14 +24,18 @@ RSpec.describe AnswersController, type: :controller do
       context 'question was found' do
         before { allow(Question).to receive(:find).with(resource_params[:question_id]).and_return(question) }
 
-        before do
-          allow(AnswerCreator).to receive(:new).with(resource_params, question) do
-            double.tap { |answer_creator| allow(answer_creator).to receive(:create).and_return(answer) }
-          end
-        end
+        let(:creator) { AnswerCreator.new(resource_params, question) }
 
-        context 'parameters for answer passed validation' do
-          before { allow(answer).to receive(:valid?).and_return(true) }
+        context 'new answer was created' do
+          before { allow(AnswerCreator).to receive(:new).and_return(creator) }
+
+          before { expect(creator).to receive(:on).twice.and_call_original }
+
+          before do
+            expect(creator).to receive(:call) do
+              creator.send(:broadcast, :succeeded, answer)
+            end
+          end
 
           before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
@@ -40,12 +44,18 @@ RSpec.describe AnswersController, type: :controller do
           it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
         end
 
-        context 'parameters for answer did not pass validation' do
+        context 'new answer was not created' do
           let(:errors) { instance_double(ActiveModel::Errors) }
 
-          before { allow(answer).to receive(:valid?).and_return(false) }
+          before { allow(AnswerCreator).to receive(:new).and_return(creator) }
 
-          before { allow(answer).to receive(:errors).and_return(errors) }
+          before { expect(creator).to receive(:on).twice.and_call_original }
+
+          before do
+            expect(creator).to receive(:call) do
+              creator.send(:broadcast, :failed, errors)
+            end
+          end
 
           before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
@@ -116,14 +126,18 @@ RSpec.describe AnswersController, type: :controller do
       before { sign_in user }
 
       context 'answer was found' do
-        before do
-          allow(AnswerUpdater).to receive(:new).with(answer, resource_params) do
-            double.tap { |answer_updater| allow(answer_updater).to receive(:update).and_return(answer) }
-          end
-        end
+        let(:updater) { AnswerUpdater.new(resource_params, answer) }
 
-        context 'parameters for answer passed validation'do
-          before { allow(answer).to receive(:valid?).and_return(true) }
+        context 'answer was updated' do
+          before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
+
+          before { expect(updater).to receive(:on).twice.and_call_original }
+
+          before do
+            expect(updater).to receive(:call) do
+              updater.send(:broadcast, :succeeded, answer)
+            end
+          end
 
           before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
 
@@ -132,12 +146,18 @@ RSpec.describe AnswersController, type: :controller do
           it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
         end
 
-        context 'parameters for answer did not pass validation'do
+        context 'question was not updated' do
           let(:errors) { instance_double(ActiveModel::Errors) }
 
-          before { allow(answer).to receive(:valid?).and_return(false) }
+          before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
 
-          before { allow(answer).to receive(:errors).and_return(errors) }
+          before { expect(updater).to receive(:on).twice.and_call_original }
+
+          before do
+            expect(updater).to receive(:call) do
+              updater.send(:broadcast, :failed, errors)
+            end
+          end
 
           before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
 
