@@ -22,9 +22,6 @@ coverage
 
 db/schema.rb
 
-confirmations_controller.rb
-confirmation_parser.rb
-
 .DS_Store
 
 .ruby-gemset
