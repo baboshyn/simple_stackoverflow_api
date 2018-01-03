@@ -2,7 +2,7 @@ class TokensController < ApplicationController
   skip_before_action :authenticate, only: [:create]
 
   def create
-    user = User.find_by!(email: resource_params[:email])
+    user = User.confirmed.find_by!(email: resource_params[:email])
 
     if user.authenticate resource_params[:password]
       token = SimpleStackoverflowToken.encode({ user_id: user.id })
