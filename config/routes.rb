@@ -8,4 +8,6 @@ Rails.application.routes.draw do
   resources :tokens, only: :create
 
   resource :profile, only: :show
+
+  resource :confirmation, only: :show
 end

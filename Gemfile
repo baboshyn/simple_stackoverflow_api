@@ -8,6 +8,7 @@ gem 'bcrypt'
 gem 'jwt'
 gem 'wisper'
 gem 'pundit'
+gem 'redis'
 
 group :development, :test do
   gem 'rspec-rails'

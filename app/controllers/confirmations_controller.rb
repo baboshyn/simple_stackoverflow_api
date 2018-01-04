@@ -1,4 +1,5 @@
 class ConfirmationsController < ApplicationController
+  skip_before_action :authenticate, only: [:show]
   before_action :set_user, only: :show
 
   def show
@@ -7,7 +8,7 @@ class ConfirmationsController < ApplicationController
 
   private
   def set_user
-    @user = User.find!(parsed_id)
+    @user = User.find(parsed_id)
 
     @user.update_attribute(:state, 1)
   end

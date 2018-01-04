@@ -3,7 +3,8 @@ class UsersController < ApplicationController
 
   def create
     UserCreator.new(resource_params)
-      .on(:succeeded) { |resource| render json: resource, status: 201 }
+      .on(:succeeded) { |resource| RedisHandler.publish_confirmation(resource) }
+      .on(:succeeded) { head 201 }
       .on(:failed) { |errors| render json: errors, status: 422 }
       .call
   end

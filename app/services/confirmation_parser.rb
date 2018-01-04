@@ -7,7 +7,7 @@ class ConfirmationParser
     def parse(confirmation_token)
       payload, _ = SimpleStackoverflowToken.decode(confirmation_token)
 
-      payload['user_id']
+      payload['user_id'] if payload
     end
   end
 end
