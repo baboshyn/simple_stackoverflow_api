@@ -4,12 +4,16 @@ class TokensController < ApplicationController
   def create
     user = User.find_by!(email: resource_params[:email])
 
-    if user.authenticate resource_params[:password]
-      token = SimpleStackoverflowToken.encode({ user_id: user.id })
+    if user.confirmed?
+      if user.authenticate resource_params[:password]
+        token = SimpleStackoverflowToken.encode({ user_id: user.id })
 
-      render json: { token: token }, status: 201
+        render json: { token: token }, status: 201
+      else
+        render json: { password: ['Invalid password'] }, status: 422
+      end
     else
-      render json: { password: ['Invalid password'] }, status: 422
+      head 403
     end
   end
 

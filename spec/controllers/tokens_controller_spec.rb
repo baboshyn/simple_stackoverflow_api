@@ -21,34 +21,46 @@ RSpec.describe TokensController, type: :controller do
     context 'user was found by login' do
       before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
 
-      context 'password is not valid' do
-        before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(false) }
+      context 'user passed confirmation' do
+
+        before { allow(user).to receive(:confirmed?).and_return(true) }
+
+        context 'password is not valid' do
+          before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(false) }
+
+          before { process :create, method: :post, params: params, format: :json }
+
+          it('returns errors') { expect(response.body).to eq ({ password: ['Invalid password'] }).to_json }
+
+          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+        end
+
+        context 'password is valid' do
+          let(:token) { double }
+
+          before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
+
+          before { allow(SimpleStackoverflowToken).to receive(:encode).with({user_id: user.id}).and_return(token) }
+
+          before { process :create, method: :post, params: params, format: :json }
+
+          it('returns created token') { expect(response.body).to eq ({ token: token }).to_json }
+
+          it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
+        end
+
+        context 'bad request was sent' do
+          before { process :create, method: :post, params: {' ': resource_params}, format: :json }
+
+          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+        end
+      end
+      context 'user didn\'t pass confirmation' do
+        before { allow(user).to receive(:confirmed?).and_return(false) }
 
         before { process :create, method: :post, params: params, format: :json }
 
-        it('returns errors') { expect(response.body).to eq ({ password: ['Invalid password'] }).to_json }
-
-        it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
-      end
-
-      context 'password is valid' do
-        let(:token) { double }
-
-        before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(true) }
-
-        before { allow(SimpleStackoverflowToken).to receive(:encode).with({user_id: user.id}).and_return(token) }
-
-        before { process :create, method: :post, params: params, format: :json }
-
-        it('returns created token') { expect(response.body).to eq ({ token: token }).to_json }
-
-        it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
-      end
-
-      context 'bad request was sent' do
-        before { process :create, method: :post, params: {' ': resource_params}, format: :json }
-
-        it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
       end
     end
   end
