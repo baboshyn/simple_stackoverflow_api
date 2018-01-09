@@ -10,16 +10,20 @@ RSpec.describe TokensController, type: :controller do
 
     let(:user) { instance_double User, id: '1' }
 
-    context 'user was not found by login' do
-      before { expect(User).to receive(:find_by!).with(email: resource_params[:email]).and_raise ActiveRecord::RecordNotFound }
+    context 'user was not found by email' do
+      before { expect(User).to receive(:where).with('email ILIKE?', resource_params[:email]).and_raise ActiveRecord::RecordNotFound }
 
       before { process :create, method: :post, params: params, format: :json }
 
       it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
     end
 
-    context 'user was found by login' do
-      before { allow(User).to receive(:find_by!).with(email: resource_params[:email]).and_return(user) }
+    context 'user was found by email' do
+      before do
+        allow(User).to receive(:where).with('email ILIKE?', resource_params[:email]) do
+          double.tap{ |collection| allow(collection).to receive(:first).and_return(user) }
+        end
+      end
 
       context 'user passed confirmation' do
 

@@ -3,11 +3,13 @@ Rails.application.routes.draw do
 
   resources :answers, only: [:create, :update, :index, :destroy]
 
-  resources :users, only: :create
+  resources :users, only: :create do
+    collection do
+      get 'confirm'
+    end
+  end
 
   resources :tokens, only: :create
 
   resource :profile, only: :show
-
-  resource :confirmation, only: :show
 end

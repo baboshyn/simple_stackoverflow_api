@@ -21,7 +21,7 @@ RSpec.describe UsersController, type: :controller do
         end
       end
 
-      before { expect(RedisHandler).to receive(:publish_confirmation).with(user) }
+      before { expect(ConfirmationHandler).to receive(:publish_confirmation).with(user) }
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 
@@ -52,6 +52,35 @@ RSpec.describe UsersController, type: :controller do
       before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
 
       it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+    end
+  end
+
+  describe 'confirm' do
+    let(:params) { { id: 'confirmation_token' } }
+
+    context 'valid confirmation token was send in request' do
+
+      before { allow(ConfirmationParser).to receive(:parse).with(params[:id]).and_return(1) }
+
+      before do
+        allow(User).to receive(:find).with(1) do
+          user.tap { |user| allow(user).to receive(:update).with(state: 1) }
+        end
+      end
+
+      before { process :confirm, method: :get, params: params, format: :json }
+
+      it('returns confirmed user') { expect(response.body).to eq user.to_json }
+
+      it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+    end
+
+    context 'invalid confirmation token was send in request' do
+      before { allow(ConfirmationParser).to receive(:parse).with(params[:id]).and_return(nil) }
+
+      before { process :confirm, method: :get, params: params, format: :json }
+
+      it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
     end
   end
 end

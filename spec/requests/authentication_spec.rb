@@ -4,9 +4,9 @@ RSpec.describe 'Authentication', type: :request do
 
   let(:user) { create(:user, attrs) }
 
-  let(:attrs) { { login: 'test', email: 'test@test.com' } }
+  let(:attrs) { { first_name: 'Kaci', last_name: 'Ernser', email: 'test@test.com' } }
 
-  let(:user_response) { { id: user.id, login: user.login, email: user.email } }
+  let(:user_response) { { id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email } }
 
   let(:token) { SimpleStackoverflowToken.encode({ user_id: user.id }) }
 
