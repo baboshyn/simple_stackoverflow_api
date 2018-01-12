@@ -55,7 +55,7 @@ RSpec.describe UsersController, type: :controller do
     end
   end
 
-  describe 'confirm' do
+  describe 'GET #confirm' do
     let(:params) { { id: 'confirmation_token' } }
 
     context 'valid confirmation token was send in request' do

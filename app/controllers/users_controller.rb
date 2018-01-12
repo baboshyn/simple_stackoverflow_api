@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate, only: [:create, :confirm]
-  before_action :confirmed_user, only: :confirm
 
   def create
     UserCreator.new(resource_params)
@@ -11,20 +10,12 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    @user.update(state: 1)
+    user(params[:token]).update(state: 1)
 
-    render json: @user
+    head 200, message: 'confirmed'
   end
 
   private
-  def confirmed_user
-    @user = User.find(parsed_id)
-  end
-
-  def parsed_id
-    ConfirmationParser.parse(params[:id])
-  end
-
   def resource_params
     params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation).to_h
   end
