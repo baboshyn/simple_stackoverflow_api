@@ -13,8 +13,4 @@ class User < ApplicationRecord
                       format: { with: /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i }
 
   scope :confirmed, -> { where("state > 0") }
-
-  def confirmation_token
-    SimpleStackoverflowToken.encode({ user_id: self.id })
-  end
 end
