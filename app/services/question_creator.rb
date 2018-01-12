@@ -1,5 +1,5 @@
 class QuestionCreator < ServicesHandler
-  def initialize(params = {})
+  def initialize(params)
     @params = params
   end
 

@@ -10,9 +10,13 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    user(params[:token]).update(state: 1)
+    if user(params[:token])
+      current_user.update(state: 1)
 
-    head 200, message: 'confirmed'
+      head 200, message: 'user confirmed'
+    else
+      head 404
+    end
   end
 
   private
