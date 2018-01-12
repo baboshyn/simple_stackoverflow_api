@@ -3,7 +3,7 @@ class UserPublisher
 
   class << self
     def publish(message)
-      Redis.current.publish CHANNEL, message
+      PubSub.call.publish CHANNEL, message
     end
   end
 end
