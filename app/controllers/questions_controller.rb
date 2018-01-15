@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :update, :destroy]
 
   def create
-    QuestionCreator.new(resource_params)
+    QuestionCreator.new(resource_params.merge(user: current_user))
       .on(:succeeded) { |resource| render json: resource, status: 201 }
       .on(:failed) { |errors| render json: errors, status: 422 }
       .call
@@ -21,6 +21,7 @@ class QuestionsController < ApplicationController
   end
 
   def update
+    authorize @question
     QuestionUpdater.new(@question, resource_params)
       .on(:succeeded) { |resource| render json: resource }
       .on(:failed) { |errors| render json: errors, status: 422 }
@@ -28,6 +29,7 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
+    authorize @question
     QuestionDestroyer.new(@question).destroy
 
     head 204

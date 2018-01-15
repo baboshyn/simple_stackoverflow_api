@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  resources :questions, only: [:create, :update, :show, :index, :destroy]
+  resources :questions, only: [:create, :show, :index, :update, :destroy]
 
-  resources :answers, only: [:create, :update, :index, :destroy]
+  resources :answers, only: [:create, :index, :update, :destroy]
 
   resources :users, only: :create do
     collection do
-      get 'confirm'
+      get :confirm
     end
   end
 
