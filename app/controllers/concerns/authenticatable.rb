@@ -12,7 +12,7 @@ module Authenticatable
     end
   end
 
-  def user(token)
+  def user(token = params[:token])
     payload, _ = SimpleStackoverflowToken.decode(token)
 
     @current_user = User.find(payload['user_id']) if payload

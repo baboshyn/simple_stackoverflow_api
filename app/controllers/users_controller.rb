@@ -9,16 +9,17 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    if user(params[:token])
-      current_user.update(state: 'confirmed')
+    authorize :User
+    current_user.confirmed!
 
-      head 200, message: 'user confirmed'
-    else
-      head 404
-    end
+    head 200, message: 'user confirmed'
   end
 
   private
+  def pundit_user
+    user
+  end
+
   def resource_params
     params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation).to_h
   end
