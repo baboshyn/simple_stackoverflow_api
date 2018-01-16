@@ -1,5 +1,5 @@
 class ServicesHandler
-  include Wisper::Publisher
+  include Homie
 
   def initialize
     raise NotImplementedError

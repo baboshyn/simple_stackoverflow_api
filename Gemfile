@@ -6,7 +6,7 @@ gem 'puma'
 gem 'active_model_serializers'
 gem 'bcrypt'
 gem 'jwt'
-gem 'wisper'
+gem 'homie'
 gem 'pundit'
 gem 'redis'
 
