@@ -26,3 +26,6 @@ db/schema.rb
 
 .ruby-gemset
 .ruby-version
+
+
+spec/policies/user_policy_spec.rb
