@@ -3,23 +3,23 @@ require 'rails_helper'
 describe UserPolicy do
   subject { described_class }
 
-  let(:user) { User.new(id: 1) }
+  let(:confirmed_user) { User.new(state: :confirmed) }
 
-  let(:confirmed_user) { User.new(id: 1, state: :confirmed) }
+  let(:unconfirmed_user) { User.new }
 
-  let(:unconfirmed_user) { User.new(id: 1, state: :unconfirmed) }
+  let(:nil_user) { nil }
 
   permissions :confirm? do
     it "denies access if user is nil" do
-      expect(subject).not_to permit(user, nil)
+      expect(subject).not_to permit(nil_user)
     end
 
     it "denies access if user is confirmed" do
-      expect(subject).not_to permit(user, confirmed_user)
+      expect(subject).not_to permit(confirmed_user)
     end
 
     it "grants access if user is unconfirmed" do
-      expect(subject).to permit(user, unconfirmed_user)
+      expect(subject).to permit(unconfirmed_user)
     end
   end
 end
