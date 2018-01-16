@@ -1,10 +1,10 @@
 class UserCreator < ServicesHandler
   def initialize(params)
-    @params = params
+    @resource = User.new(params)
   end
 
   def call
-    @resource = User.create(@params)
+    user.save
 
     UserPublisher.publish(message.to_json) if @resource.valid?
 
@@ -12,6 +12,12 @@ class UserCreator < ServicesHandler
   end
 
   private
+  def user
+    @resource.email.downcase!
+
+    @resource
+  end
+
   def message
     @resource.attributes.merge(notification: 'registration', token: token)
   end
