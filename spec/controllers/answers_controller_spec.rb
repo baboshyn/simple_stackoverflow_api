@@ -126,51 +126,59 @@ RSpec.describe AnswersController, type: :controller do
       before { sign_in user }
 
       context 'answer was found' do
-        let(:updater) { AnswerUpdater.new(resource_params, answer) }
+        context 'user is author of the answer' do
+          before { allow(subject).to receive(:authorize).and_return true }
 
-        context 'answer was updated' do
-          before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
+          let(:updater) { AnswerUpdater.new(resource_params, answer) }
 
-          before { expect(updater).to receive(:on).twice.and_call_original }
+          context 'answer was updated' do
+            before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
 
-          before do
-            expect(updater).to receive(:call) do
-              updater.send(:broadcast, :succeeded, answer)
+            before { expect(updater).to receive(:on).twice.and_call_original }
+
+            before do
+              expect(updater).to receive(:call) do
+                updater.send(:broadcast, :succeeded, answer)
+              end
             end
+
+            before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
+
+            it('returns updated answer') { expect(response.body).to eq answer.to_json }
+
+            it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
           end
 
-          before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
+          context 'question was not updated' do
+            let(:errors) { instance_double(ActiveModel::Errors) }
 
-          it('returns updated answer') { expect(response.body).to eq answer.to_json }
+            before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
 
-          it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
-        end
+            before { expect(updater).to receive(:on).twice.and_call_original }
 
-        context 'question was not updated' do
-          let(:errors) { instance_double(ActiveModel::Errors) }
-
-          before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
-
-          before { expect(updater).to receive(:on).twice.and_call_original }
-
-          before do
-            expect(updater).to receive(:call) do
-              updater.send(:broadcast, :failed, errors)
+            before do
+              expect(updater).to receive(:call) do
+                updater.send(:broadcast, :failed, errors)
+              end
             end
+
+            before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
+
+            it('returns errors') { expect(response.body).to eq errors.to_json }
+
+            it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
           end
 
-          before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
+          context 'bad request was sent' do
+            before { process :update, method: :patch, params: {id: answer_id, ' ': resource_params }, format: :json }
 
-          it('returns errors') { expect(response.body).to eq errors.to_json }
-
-          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+            it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+          end
         end
+      end
 
-        context 'bad request was sent' do
-          before { process :update, method: :patch, params: {id: answer_id, ' ': resource_params }, format: :json }
-
-          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
-        end
+      context 'user is not author of the answer' do
+        before { allow(subject).to receive(:authorize).and_return Pundit::NotAuthorizedError }
       end
 
       context 'answer was not found' do
@@ -194,15 +202,23 @@ RSpec.describe AnswersController, type: :controller do
       before { sign_in user }
 
       context 'answer was found' do
-        before do
-          expect(AnswerDestroyer).to receive(:new).with(answer) do
-            double.tap { |answer_destroyer| expect(answer_destroyer).to receive(:destroy) }
+        context 'user is author of the answer' do
+          before { allow(subject).to receive(:authorize).and_return true }
+
+          before do
+            expect(AnswerDestroyer).to receive(:new).with(answer) do
+              double.tap { |answer_destroyer| expect(answer_destroyer).to receive(:destroy) }
+            end
           end
+
+          before { process :destroy, method: :delete, params: { id: answer_id }, format: :json }
+
+          it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
         end
+      end
 
-        before { process :destroy, method: :delete, params: { id: answer_id }, format: :json }
-
-        it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
+      context 'user is not author of the answer' do
+        before { allow(subject).to receive(:authorize).and_return Pundit::NotAuthorizedError }
       end
 
       context 'answer was not found' do
