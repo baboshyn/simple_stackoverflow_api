@@ -11,7 +11,7 @@ RSpec.describe TokensController, type: :controller do
     let(:user) { instance_double User, id: '1' }
 
     context 'user was not found by email' do
-      before { expect(User).to receive(:where).with('email ILIKE?', resource_params[:email]).and_raise ActiveRecord::RecordNotFound }
+      before { expect(User).to receive(:find_by!).with(email: resource_params[:email].downcase).and_raise ActiveRecord::RecordNotFound }
 
       before { process :create, method: :post, params: params, format: :json }
 
@@ -20,14 +20,11 @@ RSpec.describe TokensController, type: :controller do
 
     context 'user was found by email' do
       before do
-        allow(User).to receive(:where).with('email ILIKE?', resource_params[:email]) do
-          double.tap{ |collection| allow(collection).to receive(:first).and_return(user) }
-        end
+        allow(User).to receive(:find_by!).with(email: resource_params[:email].downcase).and_return(user)
       end
 
       context 'user passed confirmation' do
-
-        before { allow(user).to receive(:confirmed?).and_return(true) }
+        before { allow(subject).to receive(:authorize).and_return(true) }
 
         context 'password is not valid' do
           before { allow(user).to receive(:authenticate).with(resource_params[:password]).and_return(false) }
@@ -59,12 +56,9 @@ RSpec.describe TokensController, type: :controller do
           it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
         end
       end
+
       context 'user didn\'t pass confirmation' do
-        before { allow(user).to receive(:confirmed?).and_return(false) }
-
-        before { process :create, method: :post, params: params, format: :json }
-
-        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
+        before { allow(subject).to receive(:authorize).and_return Pundit::NotAuthorizedError }
       end
     end
   end
