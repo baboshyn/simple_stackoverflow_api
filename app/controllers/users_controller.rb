@@ -9,7 +9,8 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    authorize :User
+    authorize User
+
     current_user.confirmed!
 
     head 200, message: 'user confirmed'
