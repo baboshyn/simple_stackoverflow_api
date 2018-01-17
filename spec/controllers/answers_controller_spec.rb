@@ -178,7 +178,11 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       context 'user is not author of the answer' do
-        before { allow(subject).to receive(:authorize).and_return Pundit::NotAuthorizedError }
+        before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+
+        before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
+
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
       end
 
       context 'answer was not found' do
@@ -218,7 +222,11 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       context 'user is not author of the answer' do
-        before { allow(subject).to receive(:authorize).and_return Pundit::NotAuthorizedError }
+        before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+
+        before { process :destroy, method: :delete, params: { id: answer_id }, format: :json }
+
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
       end
 
       context 'answer was not found' do

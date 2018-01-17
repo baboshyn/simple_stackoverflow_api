@@ -13,7 +13,7 @@ RSpec.describe UsersController, type: :controller do
     context 'new user was created' do
       before { allow(UserCreator).to receive(:new).and_return(creator) }
 
-      before { expect(creator).to receive(:on).exactly(3).times.and_call_original }
+      before { expect(creator).to receive(:on).twice.and_call_original }
 
       before do
         expect(creator).to receive(:call) do
@@ -21,9 +21,9 @@ RSpec.describe UsersController, type: :controller do
         end
       end
 
-      before { expect(ConfirmationHandler).to receive(:publish_confirmation).with(user) }
-
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
+
+      it('returns created user') { expect(response.body).to eq user.to_json }
 
       it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
     end
@@ -33,7 +33,7 @@ RSpec.describe UsersController, type: :controller do
 
       before { allow(UserCreator).to receive(:new).and_return(creator) }
 
-      before { expect(creator).to receive(:on).exactly(3).times.and_call_original }
+      before { expect(creator).to receive(:on).twice.and_call_original }
 
       before do
         expect(creator).to receive(:call) do
@@ -56,34 +56,30 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe 'GET #confirm' do
-    let(:params) { { id: 'confirmation_token' } }
+    let(:user) { User.new }
 
-    context 'valid confirmation token was send in request' do
+    let(:params) { { token: 'confirmation_token' } }
 
-      before { allow(ConfirmationParser).to receive(:parse).with(params[:id]).and_return(1) }
+    let(:payload) { { user_id: '1' } }
 
-      before do
-        allow(User).to receive(:find).with(1) do
-          user.tap { |user| allow(user).to receive(:update).with(state: 1) }
-        end
-      end
+    context 'valid token was sent and user passed authorization' do
+      before { allow(SimpleStackoverflowToken).to receive(:decode).with(params[:token]).and_return(payload) }
 
-      before { process :confirm, method: :get, params: params, format: :json }
+      before { allow(User).to receive(:find).with(payload['user_id']).and_return(user) }
 
-      it('returns confirmed user') { expect(response.body).to eq user.to_json }
+      before { expect(user).to receive(:confirmed!) }
+
+      before { process :confirm, method: :post, params: params, format: :json }
 
       it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
     end
 
-    context 'invalid confirmation token was send in request' do
-      before { allow(ConfirmationParser).to receive(:parse).with(params[:id]).and_return(nil) }
+    context 'user did not pass authorization' do
+      before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
-      before { process :confirm, method: :get, params: params, format: :json }
+      before { process :confirm, method: :post, params: params, format: :json }
 
-      it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
+      it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
     end
   end
 end
-
-
-
