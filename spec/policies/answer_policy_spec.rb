@@ -10,7 +10,7 @@ describe AnswerPolicy do
   let(:answer) { Answer.new(user_id: 1) }
 
   permissions :update?, :destroy? do
-    it "denies access if user is not author for answer" do
+    it "refuses access if user is not author for answer" do
       expect(subject).not_to permit(another_user, answer)
     end
 

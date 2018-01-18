@@ -8,7 +8,7 @@ describe TokenPolicy do
   let(:unconfirmed_user) { User.new }
 
   permissions :create? do
-    it "denies access if user is unconfirmed" do
+    it "refuses access if user is unconfirmed" do
       expect(subject).not_to permit(unconfirmed_user, :Token)
     end
 

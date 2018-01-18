@@ -10,7 +10,7 @@ describe QuestionPolicy do
   let(:question) { Question.new(user_id: 1) }
 
   permissions :update?, :destroy? do
-    it "denies access if user is not author for question" do
+    it "refuses access if user is not author for question" do
       expect(subject).not_to permit(another_user, question)
     end
 

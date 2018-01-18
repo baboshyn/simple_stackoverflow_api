@@ -10,11 +10,11 @@ describe UserPolicy do
   let(:nil_user) { nil }
 
   permissions :confirm? do
-    it "denies access if user is nil" do
+    it "refuses access if user is nil" do
       expect(subject).not_to permit(nil_user)
     end
 
-    it "denies access if user is confirmed" do
+    it "refuses access if user is confirmed" do
       expect(subject).not_to permit(confirmed_user)
     end
 
