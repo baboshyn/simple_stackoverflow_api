@@ -57,7 +57,7 @@ RSpec.describe TokensController, type: :controller do
         end
       end
 
-      context 'user didn\'t pass confirmation' do
+      context "user didn't pass confirmation" do
         before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :create, method: :post, params: params, format: :json }

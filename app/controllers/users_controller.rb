@@ -11,7 +11,7 @@ class UsersController < ApplicationController
   def confirm
     authorize User
 
-    current_user.confirmed!
+    pundit_user.confirmed!
 
     head 200, message: 'user confirmed'
   end

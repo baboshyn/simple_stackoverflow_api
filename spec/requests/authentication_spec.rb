@@ -2,9 +2,7 @@ require 'acceptance_helper'
 
 RSpec.describe 'Authentication', type: :request do
 
-  let(:user) { create(:user, attrs) }
-
-  let(:attrs) { { first_name: 'Kaci', last_name: 'Ernser', email: 'test@test.com' } }
+  let(:user) { create(:user) }
 
   let(:user_response) { { id: user.id, first_name: user.first_name, last_name: user.last_name, email: user.email } }
 

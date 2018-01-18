@@ -16,4 +16,10 @@ RSpec.describe User, type: :model do
   it { is_expected.to allow_value('test@test.com').for(:email) }
 
   it { is_expected.to have_secure_password }
+
+  it { is_expected.to have_many(:questions) }
+
+  it { is_expected.to have_many(:answers) }
+
+  it { is_expected.to define_enum_for(:state).with([:unconfirmed, :confirmed]) }
 end
