@@ -5,17 +5,18 @@ class AnswersController < ApplicationController
 
   before_action :set_question, only: [:create, :index]
 
-  def create
-    AnswerCreator.new(resource_params.merge(user: current_user), @question)
-      .on(:succeeded) { |resource| render json: resource, status: 201 }
-      .on(:failed) { |errors| render json: errors, status: 422 }
-      .call
-  end
-
   def index
     answers = AnswerSearcher.new(params, @question).search
 
     render json: answers
+  end
+
+  def create
+    authorize(:question, :create?)
+    AnswerCreator.new(resource_params.merge(user: current_user), @question)
+      .on(:succeeded) { |resource| render json: resource, status: 201 }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def update

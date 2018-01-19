@@ -1,14 +1,13 @@
 class AnswerPolicy < ApplicationPolicy
+  def create?
+    valid_user?
+  end
+
   def update?
-    user.id == answer.user_id
+    user_is_author?
   end
 
   def destroy?
-    user.id == answer.user_id
+    user_is_author?
   end
-
-  private
-    def answer
-      record
-    end
 end

@@ -1,5 +1,5 @@
 class TokenPolicy < ApplicationPolicy
   def create?
-    user.confirmed?
+    valid_user?
   end
 end

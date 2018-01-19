@@ -1,14 +1,13 @@
 class QuestionPolicy < ApplicationPolicy
+  def create?
+    valid_user?
+  end
+
   def update?
-    user.id == question.user_id
+    user_is_author?
   end
 
   def destroy?
-    user.id == question.user_id
+    user_is_author?
   end
-
-  private
-    def question
-      record
-    end
 end

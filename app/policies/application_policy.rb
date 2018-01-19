@@ -5,4 +5,12 @@ class ApplicationPolicy
     @user = user
     @record = record
   end
+
+  def valid_user?
+    user.confirmed?
+  end
+
+  def user_is_author?
+    user.id == record.user_id
+  end
 end
