@@ -18,7 +18,7 @@ class UsersController < ApplicationController
 
   private
   def pundit_user
-    user
+    user(params[:token])
   end
 
   def resource_params
