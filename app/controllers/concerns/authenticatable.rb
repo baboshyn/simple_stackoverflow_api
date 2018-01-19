@@ -8,11 +8,11 @@ module Authenticatable
 
   def authenticate
     authenticate_or_request_with_http_token do |token|
-      user(token)
+      parsed_user(token)
     end
   end
 
-  def user(token)
+  def parsed_user(token)
     payload, _ = SimpleStackoverflowToken.decode(token)
 
     @current_user = User.find(payload['user_id']) if payload

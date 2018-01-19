@@ -9,16 +9,11 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    authorize User
+    parsed_user(params[:token]) && authorize(:user, :confirm?)
 
-    pundit_user.confirmed!
+    current_user.confirmed!
 
-    head 200, message: 'user confirmed'
-  end
-
-  private
-  def pundit_user
-    user(params[:token])
+    render json: { message: 'user confirmed' }, satus: 200
   end
 
   def resource_params

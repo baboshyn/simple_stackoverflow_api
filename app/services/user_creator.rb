@@ -15,7 +15,7 @@ class UserCreator < ServicesHandler
   def resource
     @resource = User.new(@params)
 
-    @resource.email.downcase!
+    @resource.email&.downcase!
 
     @resource
   end
