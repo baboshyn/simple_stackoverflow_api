@@ -3,9 +3,10 @@ class TokensController < ApplicationController
   before_action :pundit_user, only: :create
 
   def create
-    authorize :Token
-    if pundit_user.authenticate resource_params[:password]
-      token = SimpleStackoverflowToken.encode(user_id: pundit_user.id)
+    authorize(:token, :create?)
+
+    if @user.authenticate resource_params[:password]
+      token = SimpleStackoverflowToken.encode(user_id: @user.id)
 
       render json: { token: token }, status: 201
     else
