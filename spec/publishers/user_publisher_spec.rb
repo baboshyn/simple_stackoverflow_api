@@ -4,7 +4,7 @@ RSpec.describe UserPublisher do
 
   describe '#publish' do
     before do
-      expect(PubSub).to receive(:call) do
+      expect(PubSub).to receive(:client) do
         double.tap { |pubsub| expect(pubsub).to receive(:publish).with('notifier.email', message) }
       end
     end

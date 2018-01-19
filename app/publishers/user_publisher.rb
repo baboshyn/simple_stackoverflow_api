@@ -3,7 +3,7 @@ class UserPublisher
 
   class << self
     def publish(message)
-      PubSub.call.publish CHANNEL, message
+      PubSub.client.publish CHANNEL, message
     end
   end
 end

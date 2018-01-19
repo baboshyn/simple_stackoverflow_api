@@ -9,7 +9,9 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    parsed_user(params[:token]) && authorize(:user, :confirm?)
+    parsed_user(params[:token])
+
+    authorize(:user, :confirm?)
 
     current_user.confirmed!
 
