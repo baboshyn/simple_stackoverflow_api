@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    parsed_user(params[:token])
+    user_from_token(params[:token])
 
     authorize(:user, :confirm?)
 

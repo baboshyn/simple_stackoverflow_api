@@ -12,7 +12,7 @@ class AnswersController < ApplicationController
   end
 
   def create
-    authorize(:question, :create?)
+    authorize(:answer, :create?)
     AnswerCreator.new(resource_params.merge(user: current_user), @question)
       .on(:succeeded) { |resource| render json: resource, status: 201 }
       .on(:failed) { |errors| render json: errors, status: 422 }

@@ -24,50 +24,62 @@ RSpec.describe AnswersController, type: :controller do
       context 'question was found' do
         before { allow(Question).to receive(:find).with(resource_params[:question_id]).and_return(question) }
 
-        let(:creator) { AnswerCreator.new(resource_params, question) }
+        context 'user is valid' do
+          before { allow(subject).to receive(:authorize).and_return(true) }
 
-        context 'new answer was created' do
-          before { allow(AnswerCreator).to receive(:new).and_return(creator) }
+          let(:creator) { AnswerCreator.new(resource_params, question) }
 
-          before { expect(creator).to receive(:on).twice.and_call_original }
+          context 'new answer was created' do
+            before { allow(AnswerCreator).to receive(:new).and_return(creator) }
 
-          before do
-            expect(creator).to receive(:call) do
-              creator.send(:broadcast, :succeeded, answer)
+            before { expect(creator).to receive(:on).twice.and_call_original }
+
+            before do
+              expect(creator).to receive(:call) do
+                creator.send(:broadcast, :succeeded, answer)
+              end
             end
+
+            before { process :create, method: :post, params: { answer: resource_params }, format: :json }
+
+            it('returns created answer') { expect(response.body).to eq answer.to_json }
+
+            it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
           end
+
+          context 'new answer was not created' do
+            let(:errors) { instance_double(ActiveModel::Errors) }
+
+            before { allow(AnswerCreator).to receive(:new).and_return(creator) }
+
+            before { expect(creator).to receive(:on).twice.and_call_original }
+
+            before do
+              expect(creator).to receive(:call) do
+                creator.send(:broadcast, :failed, errors)
+              end
+            end
+
+            before { process :create, method: :post, params: { answer: resource_params }, format: :json }
+
+            it('returns errors') { expect(response.body).to eq errors.to_json }
+
+            it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+          end
+
+          context 'bad request was sent' do
+            before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
+
+            it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+          end
+        end
+
+        context 'user is not valid' do
+          before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
           before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
-          it('returns created answer') { expect(response.body).to eq answer.to_json }
-
-          it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
-        end
-
-        context 'new answer was not created' do
-          let(:errors) { instance_double(ActiveModel::Errors) }
-
-          before { allow(AnswerCreator).to receive(:new).and_return(creator) }
-
-          before { expect(creator).to receive(:on).twice.and_call_original }
-
-          before do
-            expect(creator).to receive(:call) do
-              creator.send(:broadcast, :failed, errors)
-            end
-          end
-
-          before { process :create, method: :post, params: { answer: resource_params }, format: :json }
-
-          it('returns errors') { expect(response.body).to eq errors.to_json }
-
-          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
-        end
-
-        context 'bad request was sent' do
-          before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
-
-          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+          it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
         end
       end
 
