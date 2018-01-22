@@ -21,7 +21,9 @@ class UserCreator < ServicesHandler
   end
 
   def message
-    @resource.attributes.merge(notification: 'registration', token: token)
+    attributes = ActiveModelSerializers::SerializableResource.new(@resource).as_json
+
+    attributes.merge(notification: 'registration', token: token)
   end
 
   def token

@@ -13,7 +13,7 @@ class UsersController < ApplicationController
 
     authorize(:user, :confirm?)
 
-    current_user.confirmed!
+    @current_user.confirmed!
 
     render json: { message: 'user confirmed' }, satus: 200
   end

@@ -31,9 +31,13 @@ RSpec.describe UserCreator do
       end
 
       before do
-        allow(user).to receive(:attributes) do
-          double.tap do |user_attributes|
-            allow(user_attributes).to receive(:merge).with(notification: 'registration', token: token).and_return(message)
+        allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(user) do
+          double.tap do |user_serialized|
+            allow(user_serialized).to receive(:as_json) do
+              double.tap do |attributes|
+                allow(attributes).to receive(:merge).with(notification: 'registration', token: token).and_return(message)
+              end
+            end
           end
         end
       end
