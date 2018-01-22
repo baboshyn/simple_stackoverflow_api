@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  resources :questions, only: [:create, :show, :index, :update, :destroy]
+  resources :questions, only: [:show, :index, :create, :update, :destroy]
 
-  resources :answers, only: [:create, :index, :update, :destroy]
+  resources :answers, only: [:index, :update, :create, :destroy]
 
   resources :users, only: :create do
     collection do

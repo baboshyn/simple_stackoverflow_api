@@ -23,6 +23,7 @@ coverage
 db/schema.rb
 
 .DS_Store
+.idea/
 
 .ruby-gemset
 .ruby-version
