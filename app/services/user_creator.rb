@@ -10,8 +10,6 @@ class UserCreator < ServicesHandler
 
     UserPublisher.publish(message.to_json) if @resource.save
 
-    binding.pry
-
     super
   end
 
