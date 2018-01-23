@@ -6,6 +6,7 @@ class ApplicationPolicy
     @record = record
   end
 
+  private
   def valid_user?
     user.confirmed?
   end
