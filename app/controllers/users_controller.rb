@@ -9,11 +9,11 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    user = user_from_token(params[:token])
+    user_from_token(params[:token])
 
     authorize(:user, :confirm?)
 
-    user.confirmed!
+    current_user.confirmed!
 
     render json: { message: 'user confirmed' }, satus: 200
   end

@@ -4,22 +4,18 @@ class UserCreator < ServicesHandler
   end
 
   def call
-    resource.save
+    @resource = User.new(@params)
 
-    UserPublisher.publish(message.to_json) if @resource.valid?
+    @resource.email&.downcase!
+
+    UserPublisher.publish(message.to_json) if @resource.save
+
+    binding.pry
 
     super
   end
 
   private
-  def resource
-    @resource = User.new(@params)
-
-    @resource.email&.downcase!
-
-    @resource
-  end
-
   def message
     attributes = ActiveModelSerializers::SerializableResource.new(@resource).as_json
 

@@ -19,7 +19,7 @@
 database.yml
 secrets.yml
 coverage
-.dump.rdb
+dump.rdb
 db/schema.rb
 
 .DS_Store
