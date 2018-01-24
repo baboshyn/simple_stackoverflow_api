@@ -4,10 +4,10 @@ class QuestionPolicy < ApplicationPolicy
   end
 
   def update?
-    user_is_author?
+    valid_user? && user_is_author?
   end
 
   def destroy?
-    user_is_author?
+    valid_user? && user_is_author?
   end
 end
