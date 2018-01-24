@@ -4,7 +4,7 @@ class AnswerPolicy < ApplicationPolicy
   end
 
   def update?
-   valid_user? && user_is_author?
+    valid_user? && user_is_author?
   end
 
   def destroy?
