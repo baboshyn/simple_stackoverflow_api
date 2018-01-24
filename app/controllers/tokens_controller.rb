@@ -1,6 +1,5 @@
 class TokensController < ApplicationController
   skip_before_action :authenticate, only: [:create]
-  before_action :pundit_user, only: :create
 
   def create
     authorize(:token, :create?)
