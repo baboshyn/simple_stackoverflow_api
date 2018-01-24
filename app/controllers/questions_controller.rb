@@ -3,6 +3,8 @@ class QuestionsController < ApplicationController
 
   before_action :set_question, only: [:show, :update, :destroy]
 
+  before_action :authorization, only: [:update, :destroy]
+
   def show
     render json: @question
   end
@@ -15,6 +17,7 @@ class QuestionsController < ApplicationController
 
   def create
     authorize(:question, :create?)
+
     QuestionCreator.new(resource_params.merge(user: current_user))
       .on(:succeeded) { |resource| render json: resource, status: 201 }
       .on(:failed) { |errors| render json: errors, status: 422 }
@@ -22,7 +25,6 @@ class QuestionsController < ApplicationController
   end
 
   def update
-    authorize @question
     QuestionUpdater.new(@question, resource_params)
       .on(:succeeded) { |resource| render json: resource }
       .on(:failed) { |errors| render json: errors, status: 422 }
@@ -30,13 +32,16 @@ class QuestionsController < ApplicationController
   end
 
   def destroy
-    authorize @question
     QuestionDestroyer.new(@question).destroy
 
     head 204
   end
 
   private
+  def authorization
+    authorize @question
+  end
+
   def set_question
     @question ||= Question.find(params[:id])
   end
