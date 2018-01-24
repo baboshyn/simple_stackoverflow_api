@@ -23,7 +23,7 @@ class AnswersController < ApplicationController
   end
 
   def update
-    AnswerUpdater.new(@answer, resource_params)
+    AnswerUpdater.new(@answer, resource_params.except(:question_id))
       .on(:succeeded) { |resource| render json: resource }
       .on(:failed) { |errors| render json: errors, status: 422 }
       .call

@@ -7,7 +7,7 @@ class ServicesHandler
 
   def call
     if @resource.valid?
-      broadcast :succeeded, serialized_resource
+      broadcast :succeeded, @resource
     else
       broadcast :failed, @resource.errors
     end

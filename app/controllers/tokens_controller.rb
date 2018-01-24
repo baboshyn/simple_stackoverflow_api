@@ -2,6 +2,8 @@ class TokensController < ApplicationController
   skip_before_action :authenticate, only: [:create]
 
   def create
+    pundit_user
+
     authorize(:token, :create?)
 
     if @user.authenticate resource_params[:password]

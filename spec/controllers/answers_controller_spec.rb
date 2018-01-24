@@ -75,7 +75,7 @@ RSpec.describe AnswersController, type: :controller do
         end
 
         context 'user is not valid' do
-          before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+          before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
           before { process :create, method: :post, params: { answer: resource_params }, format: :json }
 
@@ -86,7 +86,7 @@ RSpec.describe AnswersController, type: :controller do
       context 'question was not found' do
         let(:resource_params) { { question_id: '0', body: 'body' } }
 
-        before { allow(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
+        before { expect(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
         before { process :create, method: :post, params: { answer: resource_params, format: :json } }
 
@@ -125,7 +125,7 @@ RSpec.describe AnswersController, type: :controller do
     end
 
     context 'question was not found' do
-      before { allow(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
+      before { expect(Question).to receive(:find).with('0').and_raise ActiveRecord::RecordNotFound }
 
       before { process :index, method: :get, params: { question_id: 0, answer: resource_params, format: :json } }
 
@@ -190,7 +190,7 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       context 'user is not author of the answer' do
-        before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+        before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :update, method: :patch, params: { id: answer_id, answer: resource_params }, format: :json }
 
@@ -234,7 +234,7 @@ RSpec.describe AnswersController, type: :controller do
       end
 
       context 'user is not author of the answer' do
-        before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+        before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :destroy, method: :delete, params: { id: answer_id }, format: :json }
 

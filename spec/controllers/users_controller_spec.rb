@@ -75,7 +75,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context 'user did not pass authorization' do
-      before { allow(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+      before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
       before { process :confirm, method: :post, params: params, format: :json }
 
