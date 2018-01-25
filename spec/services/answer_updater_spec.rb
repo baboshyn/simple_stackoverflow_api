@@ -6,6 +6,8 @@ RSpec.describe AnswerUpdater do
 
   let(:answer) { instance_double Answer }
 
+  let(:serialized_answer) { double }
+
   subject { AnswerUpdater.new(answer, params) }
 
   describe '#call' do
@@ -14,7 +16,13 @@ RSpec.describe AnswerUpdater do
     context 'valid params were passed' do
       before { allow(answer).to receive(:valid?).and_return(true) }
 
-      before { expect(subject).to receive(:broadcast).with(:succeeded, answer) }
+      before do
+        allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(answer) do
+          double.tap { |answer| allow(answer).to receive(:as_json).and_return(serialized_answer) }
+        end
+      end
+
+      before { expect(subject).to receive(:broadcast).with(:succeeded, serialized_answer) }
 
       it('broadcasts updated answer') { expect { subject.call }.to_not raise_error }
     end

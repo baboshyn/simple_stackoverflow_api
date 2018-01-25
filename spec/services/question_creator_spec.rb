@@ -6,6 +6,8 @@ RSpec.describe QuestionCreator do
 
   let(:question) { instance_double(Question, as_json: params, **params) }
 
+  let(:serialized_question) { double }
+
   subject { QuestionCreator.new params }
 
   describe '#call' do
@@ -14,7 +16,13 @@ RSpec.describe QuestionCreator do
     context 'valid params were passed' do
       before { allow(question).to receive(:valid?).and_return(true) }
 
-      before { expect(subject).to receive(:broadcast).with(:succeeded, question) }
+      before do
+        allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(question) do
+          double.tap { |question| allow(question).to receive(:as_json).and_return(serialized_question) }
+        end
+      end
+
+      before { expect(subject).to receive(:broadcast).with(:succeeded, serialized_question) }
 
       it('broadcasts created question') { expect { subject.call }.to_not raise_error }
     end

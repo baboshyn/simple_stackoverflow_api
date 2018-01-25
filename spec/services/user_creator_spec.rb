@@ -10,6 +10,8 @@ RSpec.describe UserCreator do
 
   let(:message) { double }
 
+  let(:serialized_user) { double }
+
   subject { UserCreator.new params }
 
   describe '#call' do
@@ -21,30 +23,28 @@ RSpec.describe UserCreator do
       end
     end
 
-    before { expect(user).to receive(:save) }
+    before { expect(user).to receive(:save).and_return(true) }
+
+    before do
+      allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(user) do
+        double.tap { |user| allow(user).to receive(:as_json).and_return(serialized_user) }
+      end
+    end
+
+    before do
+      allow(SimpleStackoverflowToken).to receive(:encode).with(user_id: user.id).and_return(token)
+    end
+
+    before do
+      allow(serialized_user).to receive(:merge).with(notification: 'registration', token: token).and_return(message)
+    end
+
+    before { expect(UserPublisher).to receive(:publish).with(message.to_json) }
 
     context 'valid params were passed' do
       before { allow(user).to receive(:valid?).and_return(true) }
 
-      before do
-        allow(SimpleStackoverflowToken).to receive(:encode).with(user_id: user.id).and_return(token)
-      end
-
-      before do
-        allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(user) do
-          double.tap do |user_serialized|
-            allow(user_serialized).to receive(:as_json) do
-              double.tap do |attributes|
-                allow(attributes).to receive(:merge).with(notification: 'registration', token: token).and_return(message)
-              end
-            end
-          end
-        end
-      end
-
-      before { expect(UserPublisher).to receive(:publish).with(message.to_json) }
-
-      before { expect(subject).to receive(:broadcast).with(:succeeded, user) }
+      before { expect(subject).to receive(:broadcast).with(:succeeded, serialized_user) }
 
       it('broadcasts created user and publishes confirmation data') { expect { subject.call }.to_not raise_error }
     end

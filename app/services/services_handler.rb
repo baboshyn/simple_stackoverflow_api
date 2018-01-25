@@ -7,7 +7,7 @@ class ServicesHandler
 
   def call
     if @resource.valid?
-      broadcast :succeeded, @resource
+      broadcast :succeeded, serialized_resource
     else
       broadcast :failed, @resource.errors
     end
@@ -15,6 +15,6 @@ class ServicesHandler
 
   private
   def serialized_resource
-    ActiveModelSerializers::SerializableResource.new(@resource).as_json
+    @serialized_resource ||= ActiveModelSerializers::SerializableResource.new(@resource).as_json
   end
 end
