@@ -2,12 +2,12 @@ class TokensController < ApplicationController
   skip_before_action :authenticate, only: [:create]
 
   def create
-    pundit_user
+    @current_user ||= User.find_by!(email: resource_params[:email].downcase)
 
     authorize(:token, :create?)
 
-    if @user.authenticate resource_params[:password]
-      token = SimpleStackoverflowToken.encode(user_id: @user.id)
+    if @current_user.authenticate resource_params[:password]
+      token = SimpleStackoverflowToken.encode(user_id: @current_user.id)
 
       render json: { token: token }, status: 201
     else
@@ -16,10 +16,6 @@ class TokensController < ApplicationController
   end
 
   private
-  def pundit_user
-    @user ||= User.find_by!(email: resource_params[:email].downcase)
-  end
-
   def resource_params
     params.require(:login).permit(:email, :password)
   end
