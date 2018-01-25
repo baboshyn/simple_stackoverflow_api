@@ -90,7 +90,7 @@ RSpec.describe QuestionsController, type: :controller do
       before { sign_in user }
 
       context 'question was found' do
-        context 'user is author of the question' do
+        context 'user passed authorization' do
           before { allow(subject).to receive(:authorize).and_return true }
 
           let(:updater) { QuestionUpdater.new(resource_params, question) }
@@ -141,7 +141,7 @@ RSpec.describe QuestionsController, type: :controller do
         end
       end
 
-      context 'user is not author of the question' do
+      context 'user did not pass authorization' do
         before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
@@ -170,7 +170,7 @@ RSpec.describe QuestionsController, type: :controller do
       before { sign_in user }
 
       context 'question was found' do
-        context 'user is author of the question' do
+        context 'user passes authorization' do
           before { allow(subject).to receive(:authorize).and_return true }
 
           before do
@@ -185,7 +185,7 @@ RSpec.describe QuestionsController, type: :controller do
         end
       end
 
-      context 'user is not author of the question' do
+      context 'user did not pass authorization' do
         before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
