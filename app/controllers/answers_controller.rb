@@ -16,15 +16,15 @@ class AnswersController < ApplicationController
   def create
     authorize(:answer, :create?)
 
-    AnswerCreator.new(resource_params.merge(user: current_user), @question)
-      .on(:succeeded) { |resource| render json: resource, status: 201 }
+    AnswerCreator.new(create_params.merge(user: current_user), @question)
+      .on(:succeeded) { |serialized_resource| render json: serialized_resource, status: 201 }
       .on(:failed) { |errors| render json: errors, status: 422 }
       .call
   end
 
   def update
-    AnswerUpdater.new(@answer, resource_params.except(:question_id))
-      .on(:succeeded) { |resource| render json: resource }
+    AnswerUpdater.new(@answer, update_params)
+      .on(:succeeded) { |serialized_resource| render json: serialized_resource }
       .on(:failed) { |errors| render json: errors, status: 422 }
       .call
   end
@@ -45,10 +45,14 @@ class AnswersController < ApplicationController
   end
 
   def set_question
-    @question = Question.find(params[:question_id] || resource_params[:question_id])
+    @question = Question.find(params[:question_id] || create_params[:question_id])
   end
 
-  def resource_params
+  def create_params
     params.require(:answer).permit(:body, :question_id).to_h
+  end
+
+  def update_params
+    params.require(:answer).permit(:body).to_h
   end
 end
