@@ -8,10 +8,6 @@ describe UserPolicy do
   let(:unconfirmed_user) { User.new }
 
   permissions :confirm? do
-    it 'refuses access if user is nil' do
-      expect(subject).not_to permit(nil)
-    end
-
     it 'refuses access if user is confirmed' do
       expect(subject).not_to permit(confirmed_user)
     end
