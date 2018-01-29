@@ -6,9 +6,19 @@ RSpec.describe TokensController, type: :controller do
   it('authenticate user') { is_expected.to be_kind_of(ActionController::HttpAuthentication::Basic::ControllerMethods) }
 
   describe 'POST #create' do
-    context 'user passed authentication' do
-      let(:user) { instance_double User, id: '1' }
+    let(:user) { instance_double(User, id: 1) }
 
+    context 'user did not pass authentication' do
+      context 'user was not found by email' do
+        before { allow(User).to receive(:find_by!).with(email: 'invalid@email').and_raise ActiveRecord::RecordNotFound }
+
+        before { process :create, method: :post, format: :json }
+
+        it('returns HTTP Status Code 404') { expect(response).to have_http_status 404 }
+      end
+    end
+
+    context 'user passed authentication' do
       before { sign_in user }
 
       context 'user did not pass authorization' do
@@ -22,7 +32,7 @@ RSpec.describe TokensController, type: :controller do
       context 'user passed authorization' do
         let(:token) { double }
 
-        before { allow(subject).to receive(:authorize).and_return true }
+        before { allow(subject).to receive(:authorize).and_return(true) }
 
         before { allow(SimpleStackoverflowToken).to receive(:encode).with({ user_id: user.id }).and_return(token) }
 

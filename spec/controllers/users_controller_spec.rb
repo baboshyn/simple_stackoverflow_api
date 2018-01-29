@@ -62,24 +62,38 @@ RSpec.describe UsersController, type: :controller do
 
     let(:payload) { { user_id: '1' } }
 
-    context 'valid token was sent and user passed authorization' do
+    context 'invalid token was sent' do
+      before { allow(SimpleStackoverflowToken).to receive(:decode).with(params[:token]).and_return(false) }
+
+      before { process :confirm, method: :post, params: params, format: :json }
+
+      it('returns header "WWW-Authenticate"') { expect(response.header['WWW-Authenticate']).to eq "Token realm=\"Application\"" }
+
+      it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
+    end
+
+    context 'valid token was sent' do
       before { allow(SimpleStackoverflowToken).to receive(:decode).with(params[:token]).and_return(payload) }
 
       before { allow(User).to receive(:find).with(payload['user_id']).and_return(user) }
 
-      before { expect(user).to receive(:confirmed!) }
+      context 'user did not pass authorization' do
+        before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
-      before { process :confirm, method: :post, params: params, format: :json }
+        before { process :confirm, method: :post, params: params, format: :json }
 
-      it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
-    end
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
+      end
 
-    context 'user did not pass authorization' do
-      before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
+      context 'valid token was sent and user passed authorization' do
+        before { allow(subject).to receive(:authorize).and_return(true) }
 
-      before { process :confirm, method: :post, params: params, format: :json }
+        before { expect(user).to receive(:confirmed!) }
 
-      it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
+        before { process :confirm, method: :post, params: params, format: :json }
+
+        it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+      end
     end
   end
 end
