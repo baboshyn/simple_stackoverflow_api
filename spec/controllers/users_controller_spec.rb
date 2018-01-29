@@ -58,11 +58,11 @@ RSpec.describe UsersController, type: :controller do
   describe 'GET #confirm' do
     let(:user) { User.new }
 
-    let(:params) { { token: 'confirmation_token' } }
-
     let(:payload) { { user_id: '1' } }
 
     context 'invalid token was sent' do
+      let(:params) { { token: 'invalid_token' } }
+
       before { allow(SimpleStackoverflowToken).to receive(:decode).with(params[:token]).and_return(false) }
 
       before { process :confirm, method: :post, params: params, format: :json }
@@ -73,6 +73,8 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context 'valid token was sent' do
+      let(:params) { { token: 'valid_token' } }
+
       before { allow(SimpleStackoverflowToken).to receive(:decode).with(params[:token]).and_return(payload) }
 
       before { allow(User).to receive(:find).with(payload['user_id']).and_return(user) }
