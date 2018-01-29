@@ -9,16 +9,26 @@ class UsersController < ApplicationController
   end
 
   def confirm
-    user_from_token(params[:token])
+    if user_from_token(params[:token])
 
-    authorize(:user, :confirm?)
+      authorize(:user, :confirm?)
 
-    current_user.confirmed!
+      current_user.confirmed!
 
-    render json: { message: 'user confirmed' }, satus: 200
+      render json: { message: 'user confirmed' }, satus: 200
+    else
+      render_unauthorized
+    end
   end
 
+  private
   def resource_params
     params.require(:user).permit(:first_name, :last_name, :email, :password, :password_confirmation).to_h
+  end
+
+  def render_unauthorized
+    headers['WWW-Authenticate'] = 'Token realm="Application"'
+
+    head 401
   end
 end

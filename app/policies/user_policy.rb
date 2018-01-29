@@ -1,5 +1,5 @@
 class UserPolicy < ApplicationPolicy
   def confirm?
-    user && user.unconfirmed?
+    user.unconfirmed?
   end
 end
