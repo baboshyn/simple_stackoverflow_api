@@ -166,7 +166,7 @@ RSpec.describe AnswersController, type: :controller do
           end
 
           context 'bad request was sent' do
-            before { process :update, method: :patch, params: {id: answer_id, ' ': resource_params }, format: :json }
+            before { process :update, method: :patch, params: { id: answer_id, ' ': resource_params }, format: :json }
 
             it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
           end

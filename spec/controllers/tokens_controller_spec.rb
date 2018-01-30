@@ -29,7 +29,7 @@ RSpec.describe TokensController, type: :controller do
     end
 
     context 'user passed authentication' do
-      before {sign_in user}
+      before { sign_in user }
 
       context "user didn't pass authorization" do
         before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
