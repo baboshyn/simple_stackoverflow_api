@@ -15,11 +15,7 @@ RSpec.describe UsersController, type: :controller do
 
       before { expect(creator).to receive(:on).twice.and_call_original }
 
-      before do
-        expect(creator).to receive(:call) do
-          creator.send(:broadcast, :succeeded, user)
-        end
-      end
+      before { broadcast_succeeded creator, user}
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 
@@ -35,11 +31,7 @@ RSpec.describe UsersController, type: :controller do
 
       before { expect(creator).to receive(:on).twice.and_call_original }
 
-      before do
-        expect(creator).to receive(:call) do
-          creator.send(:broadcast, :failed, errors)
-        end
-      end
+      before { broadcast_failed creator, errors}
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 

@@ -29,11 +29,7 @@ RSpec.describe QuestionsController, type: :controller do
 
           before { expect(creator).to receive(:on).twice.and_call_original }
 
-          before do
-            expect(creator).to receive(:call) do
-              creator.send(:broadcast, :succeeded, question)
-            end
-          end
+          before { broadcast_succeeded creator, question }
 
           before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
@@ -49,11 +45,7 @@ RSpec.describe QuestionsController, type: :controller do
 
           before { expect(creator).to receive(:on).twice.and_call_original }
 
-          before do
-            expect(creator).to receive(:call) do
-              creator.send(:broadcast, :failed, errors)
-            end
-          end
+          before { broadcast_failed creator, errors }
 
           before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
@@ -100,11 +92,7 @@ RSpec.describe QuestionsController, type: :controller do
 
             before { expect(updater).to receive(:on).twice.and_call_original }
 
-            before do
-              expect(updater).to receive(:call) do
-                updater.send(:broadcast, :succeeded, question)
-              end
-            end
+            before { broadcast_succeeded updater, question }
 
             before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
 
@@ -120,11 +108,7 @@ RSpec.describe QuestionsController, type: :controller do
 
             before { expect(updater).to receive(:on).twice.and_call_original }
 
-            before do
-              expect(updater).to receive(:call) do
-                updater.send(:broadcast, :failed, errors)
-              end
-            end
+            before { broadcast_failed updater, errors }
 
             before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
 
