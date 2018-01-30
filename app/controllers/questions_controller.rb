@@ -3,7 +3,7 @@ class QuestionsController < ApplicationController
 
   before_action :set_question, only: [:show, :update, :destroy]
 
-  before_action :authorization, only: [:update, :destroy]
+  before_action :authorize_question, only: [:update, :destroy]
 
   def show
     render json: @question
@@ -38,7 +38,7 @@ class QuestionsController < ApplicationController
   end
 
   private
-  def authorization
+  def authorize_question
     authorize @question
   end
 

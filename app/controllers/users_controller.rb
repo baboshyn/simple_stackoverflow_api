@@ -15,7 +15,7 @@ class UsersController < ApplicationController
 
       current_user.confirmed!
 
-      render json: { message: 'user confirmed' }, satus: 200
+      render json: { message: 'user confirmed' }
     else
       render_unauthorized
     end

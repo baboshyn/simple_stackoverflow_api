@@ -5,7 +5,7 @@ class AnswersController < ApplicationController
 
   before_action :set_question, only: [:create, :index]
 
-  before_action :authorization, only: [:update, :destroy]
+  before_action :authorize_answer, only: [:update, :destroy]
 
   def index
     answers = AnswerSearcher.new(params, @question).search
@@ -36,7 +36,7 @@ class AnswersController < ApplicationController
   end
 
   private
-  def authorization
+  def authorize_answer
     authorize @answer
   end
 

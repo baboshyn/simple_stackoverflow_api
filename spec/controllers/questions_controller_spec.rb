@@ -113,25 +113,25 @@ RSpec.describe QuestionsController, type: :controller do
             it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
           end
 
-        context 'question was not updated' do
-          let(:errors) { instance_double(ActiveModel::Errors) }
+          context 'invalid attributes were sent' do
+            let(:errors) { instance_double(ActiveModel::Errors) }
 
-          before { allow(QuestionUpdater).to receive(:new).and_return(updater) }
+            before { allow(QuestionUpdater).to receive(:new).and_return(updater) }
 
-          before { expect(updater).to receive(:on).twice.and_call_original }
+            before { expect(updater).to receive(:on).twice.and_call_original }
 
-          before do
-            expect(updater).to receive(:call) do
-              updater.send(:broadcast, :failed, errors)
+            before do
+              expect(updater).to receive(:call) do
+                updater.send(:broadcast, :failed, errors)
+              end
             end
+
+            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+            it('returns errors') { expect(response.body).to eq errors.to_json }
+
+            it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
           end
-
-          before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
-
-          it('returns errors') { expect(response.body).to eq errors.to_json }
-
-          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
-        end
 
           context 'bad request was sent' do
             before { process :update, method: :patch, params: { id: question_id, ' ': resource_params }, format: :json }

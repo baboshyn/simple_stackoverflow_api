@@ -67,7 +67,7 @@ RSpec.describe UsersController, type: :controller do
 
       before { process :confirm, method: :post, params: params, format: :json }
 
-      it('returns header "WWW-Authenticate"') { expect(response.header['WWW-Authenticate']).to eq "Token realm=\"Application\"" }
+      it('returns header "WWW-Authenticate"') { expect(response.header['WWW-Authenticate']).to eq 'Token realm="Application"' }
 
       it('returns HTTP Status Code 401') { expect(response).to have_http_status 401 }
     end

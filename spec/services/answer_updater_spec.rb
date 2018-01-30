@@ -30,9 +30,9 @@ RSpec.describe AnswerUpdater do
     context 'invalid params were passed' do
       let(:errors) { instance_double(ActiveModel::Errors) }
 
-      before { allow(answer).to receive(:errors).and_return(errors) }
-
       before { allow(answer).to receive(:valid?).and_return(false) }
+
+      before { allow(answer).to receive(:errors).and_return(errors) }
 
       before { expect(subject).to receive(:broadcast).with(:failed, errors) }
 
