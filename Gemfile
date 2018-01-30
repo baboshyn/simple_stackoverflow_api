@@ -27,7 +27,6 @@ gem 'pundit'
 gem 'redis'
 
 group :development, :test do
-
   # implements BDD for Ruby
   gem 'rspec-rails'
 
@@ -44,14 +43,13 @@ group :development, :test do
   gem 'factory_bot_rails'
 
   # code coverage for Ruby
-  gem 'simplecov', :require => false
+  gem 'simplecov', require: false
 
   # debugger
   gem 'pry-byebug'
 end
 
 group :test do
-
-  #cleans databases for testing
+  # cleans databases for testing
   gem 'database_cleaner'
 end
