@@ -161,7 +161,7 @@ RSpec.describe AnswersController, type: :controller do
             it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
           end
 
-          context 'question was not updated' do
+          context 'answer was not updated because of passed invalid attributes' do
             let(:errors) { instance_double(ActiveModel::Errors) }
 
             before { allow(AnswerUpdater).to receive(:new).and_return(updater) }
