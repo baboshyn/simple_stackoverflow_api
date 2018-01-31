@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe QuestionDestroyer do
   let(:question) { instance_double Question }
 

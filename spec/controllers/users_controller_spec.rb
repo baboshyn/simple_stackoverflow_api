@@ -15,7 +15,7 @@ RSpec.describe UsersController, type: :controller do
 
       before { expect(creator).to receive(:on).twice.and_call_original }
 
-      before { broadcast_succeeded creator, user}
+      before { broadcast_succeeded creator, user }
 
       before { process :create, method: :post, params: { user: resource_params }, format: :json }
 
@@ -24,7 +24,7 @@ RSpec.describe UsersController, type: :controller do
       it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
     end
 
-    context 'new user was not created' do
+    context 'invalid attributes were sent' do
       let(:errors) { instance_double(ActiveModel::Errors) }
 
       before { allow(UserCreator).to receive(:new).and_return(creator) }

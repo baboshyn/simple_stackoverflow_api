@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe UserCreator do
   it { is_expected.to be_a ServicesHandler }
 
@@ -10,7 +11,7 @@ RSpec.describe UserCreator do
 
   let(:message) { double }
 
-  let(:serialized_user) { double }
+  let(:errors) { instance_double(ActiveModel::Errors) }
 
   subject { UserCreator.new params }
 
@@ -26,37 +27,25 @@ RSpec.describe UserCreator do
     before { expect(user).to receive(:save).and_return(true) }
 
     before do
-      allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(user) do
-        double.tap { |user| allow(user).to receive(:as_json).and_return(serialized_user) }
-      end
-    end
-
-    before do
       allow(SimpleStackoverflowToken).to receive(:encode).with(user_id: user.id).and_return(token)
     end
 
     before do
-      allow(serialized_user).to receive(:merge).with(notification: 'registration', token: token).and_return(message)
+      allow(user.as_json).to receive(:merge).with(notification: 'registration', token: token).and_return(message)
     end
 
     before { expect(UserPublisher).to receive(:publish).with(message.to_json) }
 
     context 'valid params were passed' do
-      before { allow(user).to receive(:valid?).and_return(true) }
-
-      before { expect(subject).to receive(:broadcast).with(:succeeded, serialized_user) }
+      before { be_broadcasted_succeeded user }
 
       it('broadcasts created user and publishes confirmation data') { expect { subject.call }.to_not raise_error }
     end
 
     context 'invalid params were passed' do
-      let(:errors) { instance_double(ActiveModel::Errors) }
-
       before { allow(user).to receive(:errors).and_return(errors) }
 
-      before { allow(user).to receive(:valid?).and_return(false) }
-
-      before { expect(subject).to receive(:broadcast).with(:failed, errors) }
+      before { be_broadcasted_failed(user, errors) }
 
       it('broadcasts user.errors') { expect { subject.call }.to_not raise_error }
     end

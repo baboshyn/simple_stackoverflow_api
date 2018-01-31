@@ -1,11 +1,7 @@
 require 'rails_helper'
 
-describe UserPolicy do
+describe UserPolicy, type: :policy do
   subject { described_class }
-
-  let(:confirmed_user) { User.new(state: :confirmed) }
-
-  let(:unconfirmed_user) { User.new }
 
   permissions :confirm? do
     it 'refuses access if user is confirmed' do

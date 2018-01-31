@@ -38,7 +38,7 @@ RSpec.describe QuestionsController, type: :controller do
           it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
         end
 
-        context 'new question was not created' do
+        context 'user sent invalid attributes' do
           let(:errors) { instance_double(ActiveModel::Errors) }
 
           before { allow(QuestionCreator).to receive(:new).and_return(creator) }

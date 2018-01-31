@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe AnswerCreator do
   it { is_expected.to be_a ServicesHandler }
 
@@ -10,7 +11,7 @@ RSpec.describe AnswerCreator do
 
   let(:answer) { instance_double(Answer, as_json: params, **params) }
 
-  let(:serialized_answer) { double }
+  let(:errors) { instance_double(ActiveModel::Errors) }
 
   describe '#call' do
     before do
@@ -20,29 +21,17 @@ RSpec.describe AnswerCreator do
     end
 
     context 'valid params were passed' do
-      before { allow(answer).to receive(:valid?).and_return(true) }
-
-      before do
-        allow(ActiveModelSerializers::SerializableResource).to receive(:new).with(answer) do
-          double.tap { |answer| allow(answer).to receive(:as_json).and_return(serialized_answer) }
-        end
-      end
-
-      before { expect(subject).to receive(:broadcast).with(:succeeded, serialized_answer) }
+      before { be_broadcasted_succeeded answer }
 
       it('broadcasts created answer') { expect { subject.call }.to_not raise_error }
     end
 
     context 'invalid params were passed' do
-      let(:errors) { instance_double(ActiveModel::Errors) }
-
       before { allow(answer).to receive(:errors).and_return(errors) }
 
-      before { allow(answer).to receive(:valid?).and_return(false) }
+      before { be_broadcasted_failed(answer, errors) }
 
-      before { expect(subject).to receive(:broadcast).with(:failed, errors) }
-
-      it('broadcasts question.errors') { expect { subject.call }.to_not raise_error }
+      it('broadcasts answer.errors') { expect { subject.call }.to_not raise_error }
     end
   end
 end
