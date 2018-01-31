@@ -3,8 +3,6 @@ require 'rails_helper'
 describe AnswerPolicy do
   subject { described_class }
 
-  let(:answer) { Answer.new(user_id: 1) }
-
   permissions :create? do
     it 'refuses access if user is not confirmed' do
       expect(subject).not_to permit(unconfirmed_user)

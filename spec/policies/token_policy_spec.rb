@@ -5,11 +5,11 @@ describe TokenPolicy do
 
   permissions :create? do
     it 'refuses access if user is unconfirmed' do
-      expect(subject).not_to permit(User.new, :token)
+      expect(subject).not_to permit(unconfirmed_user, :token)
     end
 
     it 'grants access if user is confirmed' do
-      expect(subject).to permit(User.new(state: :confirmed), :token)
+      expect(subject).to permit(confirmed_user, :token)
     end
   end
 end
