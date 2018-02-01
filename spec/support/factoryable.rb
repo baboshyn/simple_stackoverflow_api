@@ -1,14 +1,14 @@
 module Factoryable
   def confirmed_user
-    instance_double(User, id: 1, state: 'confirmed')
+    instance_double(User, id: 1, unconfirmed?: false, confirmed?: true)
   end
 
   def unconfirmed_user
-    instance_double(User, id: 1, state: 'unconfirmed')
+    instance_double(User, id: 1, unconfirmed?: true, confirmed?: false)
   end
 
   def not_author
-    instance_double(User, id: 2, state: 'confirmed')
+    instance_double(User, id: 2, unconfirmed?: false, confirmed?: true)
   end
 
   def answer
