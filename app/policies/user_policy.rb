@@ -1,5 +1,5 @@
 class UserPolicy < ApplicationPolicy
   def confirm?
-    user.unconfirmed?
+    user.state == 'unconfirmed'
   end
 end

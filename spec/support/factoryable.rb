@@ -1,21 +1,21 @@
 module Factoryable
   def confirmed_user
-    build(:user, id: 1, state: 'confirmed')
+    instance_double(User, id: 1, state: 'confirmed')
   end
 
   def unconfirmed_user
-    build(:user, id: 1, state: 'unconfirmed')
+    instance_double(User, id: 1, state: 'unconfirmed')
   end
 
   def not_author
-    build(:user, id: 2, state: 'confirmed')
+    instance_double(User, id: 2, state: 'confirmed')
   end
 
   def answer
-    build(:answer, user_id: 1)
+    instance_double(Answer, user_id: 1)
   end
 
   def question
-    build(:question, user_id: 1)
+    instance_double(Question, user_id: 1)
   end
 end

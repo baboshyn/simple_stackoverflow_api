@@ -8,7 +8,7 @@ class ApplicationPolicy
 
   private
   def valid_user?
-    user.confirmed?
+    user.state == 'confirmed'
   end
 
   def user_is_author?
