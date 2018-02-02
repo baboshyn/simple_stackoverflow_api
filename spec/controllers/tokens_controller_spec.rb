@@ -6,11 +6,13 @@ RSpec.describe TokensController, type: :controller do
   it('authenticate user') { is_expected.to be_kind_of(ActionController::HttpAuthentication::Basic::ControllerMethods) }
 
   describe 'POST #create' do
-    let(:user) { instance_double(User, id: 1, email: 'test@test.com') }
+    let(:user) { build_stubbed(:user, id: 1, email: 'test@test.com') }
+
+    before { request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user.email, 'password') }
 
     context "user didn't pass authentication" do
       context 'user sent invalid email' do
-        before { expect(subject).to receive(:authenticate).and_raise ActiveRecord::RecordNotFound }
+        before { expect(User).to receive(:find_by!).and_raise ActiveRecord::RecordNotFound }
 
         before { process :create, method: :post, format: :json }
 
@@ -20,7 +22,7 @@ RSpec.describe TokensController, type: :controller do
       context 'user sent invalid password' do
         before { allow(User).to receive(:find_by!).with(email: 'test@test.com').and_return(user) }
 
-        before { allow(user).to receive(:authenticate).with('invalid_password').and_return(false) }
+        before { allow(user).to receive(:authenticate).with('password').and_return(false) }
 
         before { process :create, method: :post, format: :json }
 

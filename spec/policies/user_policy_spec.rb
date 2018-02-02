@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe UserPolicy, type: :policy do
+describe UserPolicy do
   subject { described_class }
 
   permissions :confirm? do
