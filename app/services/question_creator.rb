@@ -1,12 +1,11 @@
-class QuestionCreator
-  def initialize(params = {})
+class QuestionCreator < ServicesHandler
+  def initialize(params)
     @params = params
   end
 
-  def create
-    Question.create!(@params)
+  def call
+    @resource = Question.create(@params)
 
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+    super
   end
 end

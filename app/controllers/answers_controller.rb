@@ -5,15 +5,7 @@ class AnswersController < ApplicationController
 
   before_action :set_question, only: [:create, :index]
 
-  def create
-    answer = AnswerCreator.new(resource_params, @question).create
-
-    if answer.valid?
-      render json: answer, status: 201
-    else
-      render json: answer.errors, status: 422
-    end
-  end
+  before_action :authorize_answer, only: [:update, :destroy]
 
   def index
     answers = AnswerSearcher.new(params, @question).search
@@ -21,14 +13,20 @@ class AnswersController < ApplicationController
     render json: answers
   end
 
-  def update
-    answer = AnswerUpdater.new(@answer, resource_params).update
+  def create
+    authorize(:answer, :create?)
 
-    if answer.valid?
-      render json: answer
-    else
-      render json: answer.errors, status: 422
-    end
+    AnswerCreator.new(create_params.merge(user: current_user), @question)
+      .on(:succeeded) { |serialized_resource| render json: serialized_resource, status: 201 }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
+  end
+
+  def update
+    AnswerUpdater.new(@answer, update_params)
+      .on(:succeeded) { |serialized_resource| render json: serialized_resource }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def destroy
@@ -38,15 +36,23 @@ class AnswersController < ApplicationController
   end
 
   private
+  def authorize_answer
+    authorize @answer
+  end
+
   def set_answer
     @answer ||= Answer.find(params[:id])
   end
 
   def set_question
-    @question = Question.find(params[:question_id] || resource_params[:question_id])
+    @question = Question.find(params[:question_id] || create_params[:question_id])
   end
 
-  def resource_params
+  def create_params
     params.require(:answer).permit(:body, :question_id).to_h
+  end
+
+  def update_params
+    params.require(:answer).permit(:body).to_h
   end
 end

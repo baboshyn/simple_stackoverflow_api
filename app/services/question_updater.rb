@@ -1,17 +1,13 @@
-class QuestionUpdater
+class QuestionUpdater < ServicesHandler
   def initialize(question, params)
-    @question = question
+    @resource = question
 
     @params = params
   end
 
+  def call
+    @resource.update(@params)
 
-  def update
-    @question.update!(@params)
-
-    @question
-
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+    super
   end
 end

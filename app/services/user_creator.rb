@@ -1,12 +1,24 @@
-class UserCreator
-  def initialize(params = {})
+class UserCreator < ServicesHandler
+  def initialize(params)
     @params = params
   end
 
-  def create
-    User.create!(@params)
+  def call
+    @resource = User.new(@params)
 
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+    @resource.email&.downcase!
+
+    UserPublisher.publish(message.to_json) if @resource.save
+
+    super
+  end
+
+  private
+  def message
+    serialized_resource.merge(notification: 'registration', token: token)
+  end
+
+  def token
+    SimpleStackoverflowToken.encode(user_id: @resource.id)
   end
 end

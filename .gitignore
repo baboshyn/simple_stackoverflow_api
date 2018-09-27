@@ -19,10 +19,11 @@
 database.yml
 secrets.yml
 coverage
-
+dump.rdb
 db/schema.rb
 
 .DS_Store
+.idea/
 
 .ruby-gemset
 .ruby-version

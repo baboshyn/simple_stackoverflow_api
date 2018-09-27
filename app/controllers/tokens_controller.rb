@@ -1,20 +1,18 @@
 class TokensController < ApplicationController
-  skip_before_action :authenticate, only: [:create]
+  include ActionController::HttpAuthentication::Basic::ControllerMethods
 
   def create
-    user = User.find_by!(email: resource_params[:email])
+    authorize(:token, :create?)
 
-    if user.authenticate resource_params[:password]
-      token = SimpleStackoverflowToken.encode({ user_id: user.id })
+    token = SimpleStackoverflowToken.encode(user_id: current_user.id)
 
-      render json: { token: token }, status: 201
-    else
-      render json: { password: ['Invalid password'] }, status: 422
-    end
+    render json: { token: token }, status: 201
   end
 
   private
-  def resource_params
-    params.require(:login).permit(:email, :password)
+  def authenticate
+    authenticate_or_request_with_http_basic do |email, password|
+      @current_user = User.find_by!(email: email.downcase).authenticate(password)
+    end
   end
 end

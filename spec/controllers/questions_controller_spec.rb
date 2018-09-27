@@ -19,40 +19,54 @@ RSpec.describe QuestionsController, type: :controller do
     context 'user authenticated' do
       before { sign_in user }
 
-      before do
-        allow(QuestionCreator).to receive(:new).with(resource_params) do
-          double.tap { |question_creator| allow(question_creator).to receive(:create).and_return(question) }
+      context 'user is valid' do
+        before { allow(subject).to receive(:authorize).and_return(true) }
+
+        let(:creator) { QuestionCreator.new(resource_params) }
+
+        context 'new question was created' do
+          before { allow(QuestionCreator).to receive(:new).and_return(creator) }
+
+          before { expect(creator).to receive(:on).twice.and_call_original }
+
+          before { broadcast_succeeded creator, question }
+
+          before { process :create, method: :post, params: { question: resource_params }, format: :json }
+
+          it('returns created question') { expect(response.body).to eq question.to_json }
+
+          it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
+        end
+
+        context 'user sent invalid attributes' do
+          let(:errors) { instance_double(ActiveModel::Errors) }
+
+          before { allow(QuestionCreator).to receive(:new).and_return(creator) }
+
+          before { expect(creator).to receive(:on).twice.and_call_original }
+
+          before { broadcast_failed creator, errors }
+
+          before { process :create, method: :post, params: { question: resource_params }, format: :json }
+
+          it('returns errors') { expect(response.body).to eq errors.to_json }
+
+          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+        end
+
+        context 'bad request was sent' do
+          before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
+
+          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
         end
       end
 
-      context 'parameters for question passed validation'do
-        before { allow(question).to receive(:valid?).and_return(true) }
+      context 'user is not valid' do
+        before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :create, method: :post, params: { question: resource_params }, format: :json }
 
-        it('returns created question') { expect(response.body).to eq question.to_json }
-
-        it('returns HTTP Status Code 201') { expect(response).to have_http_status 201 }
-      end
-
-      context 'parameters for question did not pass validation'do
-        let(:errors) { instance_double(ActiveModel::Errors) }
-
-        before { allow(question).to receive(:valid?).and_return(false) }
-
-        before { allow(question).to receive(:errors).and_return(errors) }
-
-        before { process :create, method: :post, params: { question: resource_params }, format: :json }
-
-        it('returns errors') { expect(response.body).to eq errors.to_json }
-
-        it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
-      end
-
-      context 'bad request was sent' do
-        before { process :create, method: :post, params: { ' ': resource_params }, format: :json }
-
-        it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
       end
     end
 
@@ -68,41 +82,55 @@ RSpec.describe QuestionsController, type: :controller do
       before { sign_in user }
 
       context 'question was found' do
-        before do
-          allow(QuestionUpdater).to receive(:new).with(question, resource_params) do
-            double.tap { |question_updater| allow(question_updater).to receive(:update).and_return(question) }
+        context 'user passed authorization' do
+          before { allow(subject).to receive(:authorize).and_return true }
+
+          let(:updater) { QuestionUpdater.new(resource_params, question) }
+
+          context 'question was updated' do
+            before { allow(QuestionUpdater).to receive(:new).and_return(updater) }
+
+            before { expect(updater).to receive(:on).twice.and_call_original }
+
+            before { broadcast_succeeded updater, question }
+
+            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+            it('returns updated question') { expect(response.body).to eq question.to_json }
+
+            it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
+          end
+
+          context 'invalid attributes were sent' do
+            let(:errors) { instance_double(ActiveModel::Errors) }
+
+            before { allow(QuestionUpdater).to receive(:new).and_return(updater) }
+
+            before { expect(updater).to receive(:on).twice.and_call_original }
+
+            before { broadcast_failed updater, errors }
+
+            before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+
+            it('returns errors') { expect(response.body).to eq errors.to_json }
+
+            it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
+          end
+
+          context 'bad request was sent' do
+            before { process :update, method: :patch, params: { id: question_id, ' ': resource_params }, format: :json }
+
+            it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
           end
         end
+      end
 
-        context 'parameters for question passed validation' do
-          before { allow(question).to receive(:valid?).and_return(true) }
+      context 'user did not pass authorization' do
+        before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
-          before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
+        before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
 
-          it('updated question') { expect(response.body).to eq question.to_json }
-
-          it('returns HTTP Status Code 200') { expect(response).to have_http_status 200 }
-        end
-
-        context 'parameters for question did not pass validation' do
-          let(:errors) { instance_double(ActiveModel::Errors) }
-
-          before { allow(question).to receive(:valid?).and_return(false) }
-
-          before { allow(question).to receive(:errors).and_return(errors) }
-
-          before { process :update, method: :patch, params: { id: question_id, question: resource_params }, format: :json }
-
-          it('returns errors') { expect(response.body).to eq errors.to_json }
-
-          it('returns HTTP Status Code 422') { expect(response).to have_http_status 422 }
-        end
-
-        context 'bad request was sent' do
-          before { process :update, method: :patch, params: { id: question_id, ' ': resource_params }, format: :json }
-
-          it('returns HTTP Status Code 400') { expect(response).to have_http_status 400 }
-        end
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
       end
 
       context 'question was not found' do
@@ -126,15 +154,27 @@ RSpec.describe QuestionsController, type: :controller do
       before { sign_in user }
 
       context 'question was found' do
-        before do
-          expect(QuestionDestroyer).to receive(:new).with(question) do
-            double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
+        context 'user passes authorization' do
+          before { allow(subject).to receive(:authorize).and_return true }
+
+          before do
+            expect(QuestionDestroyer).to receive(:new).with(question) do
+              double.tap { |question_destroyer| expect(question_destroyer).to receive(:destroy) }
+            end
           end
+
+          before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
+
+          it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
         end
+      end
+
+      context 'user did not pass authorization' do
+        before { expect(subject).to receive(:authorize).and_raise Pundit::NotAuthorizedError }
 
         before { process :destroy, method: :delete, params: { id: question_id }, format: :json }
 
-        it('returns HTTP Status Code 204') { expect(response).to have_http_status 204 }
+        it('returns HTTP Status Code 403') { expect(response).to have_http_status 403 }
       end
 
       context 'question was not found' do

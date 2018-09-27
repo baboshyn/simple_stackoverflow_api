@@ -1,26 +1,31 @@
 require 'rails_helper'
+
 RSpec.describe QuestionUpdater do
+  it { is_expected.to be_a ServicesHandler }
+
+  let(:question) { instance_double(Question, as_json: params, **params) }
+
+  let(:params) { attributes_for(:question) }
+
+  let(:errors) { instance_double(ActiveModel::Errors) }
+
   subject { QuestionUpdater.new(question, params) }
 
-  describe '#update' do
+  describe '#call' do
+    before { allow(question).to receive(:update).with(params).and_return(question) }
+
     context 'valid params were passed' do
-      let(:question) { instance_double Question }
+      before { be_broadcasted_succeeded question }
 
-      let(:params) { attributes_for(:question) }
-
-      before { allow(question).to receive(:update!).with(params).and_return(question) }
-
-      it('returns updated question') { expect(subject.update).to eq question }
+      it('broadcasts updated question') { expect { subject.call }.to_not raise_error }
     end
 
     context 'invalid params were passed' do
-      let(:question) { Question.new }
+      before { allow(question).to receive(:errors).and_return(errors) }
 
-      let(:params) { {} }
+      before { be_broadcasted_failed(question, errors) }
 
-      before { allow(question).to receive(:update!).with(params).and_raise(ActiveRecord::RecordInvalid.new(question)) }
-
-      it('returns errors') { expect(subject.update).to eq question }
+      it('broadcasts question.errors') { expect { subject.call }.to_not raise_error }
     end
   end
 end

@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe SimpleStackoverflowToken do
   let(:user) { FactoryBot.build_stubbed(:user) }
 

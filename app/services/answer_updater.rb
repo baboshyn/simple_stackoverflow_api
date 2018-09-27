@@ -1,17 +1,13 @@
-class AnswerUpdater
+class AnswerUpdater < ServicesHandler
   def initialize(answer, params)
-    @answer = answer
+    @resource = answer
 
     @params = params
   end
 
+  def call
+    @resource.update(@params)
 
-  def update
-    @answer.update!(@params)
-
-    @answer
-
-    rescue ActiveRecord::RecordInvalid => invalid
-    invalid.record
+    super
   end
 end

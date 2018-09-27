@@ -3,15 +3,7 @@ class QuestionsController < ApplicationController
 
   before_action :set_question, only: [:show, :update, :destroy]
 
-  def create
-    question = QuestionCreator.new(resource_params).create
-
-    if question.valid?
-      render json: question, status: 201
-    else
-      render json: question.errors, status: 422
-    end
-  end
+  before_action :authorize_question, only: [:update, :destroy]
 
   def show
     render json: @question
@@ -23,14 +15,20 @@ class QuestionsController < ApplicationController
     render json: questions
   end
 
-  def update
-    question = QuestionUpdater.new(@question, resource_params).update
+  def create
+    authorize(:question, :create?)
 
-    if question.valid?
-      render json: question
-    else
-      render json: question.errors, status: 422
-    end
+    QuestionCreator.new(resource_params.merge(user: current_user))
+      .on(:succeeded) { |serialized_resource| render json: serialized_resource, status: 201 }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
+  end
+
+  def update
+    QuestionUpdater.new(@question, resource_params)
+      .on(:succeeded) { |serialized_resource| render json: serialized_resource }
+      .on(:failed) { |errors| render json: errors, status: 422 }
+      .call
   end
 
   def destroy
@@ -40,6 +38,10 @@ class QuestionsController < ApplicationController
   end
 
   private
+  def authorize_question
+    authorize @question
+  end
+
   def set_question
     @question ||= Question.find(params[:id])
   end

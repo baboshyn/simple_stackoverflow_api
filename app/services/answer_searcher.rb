@@ -1,5 +1,5 @@
 class AnswerSearcher
-  def initialize(params = {}, question)
+  def initialize(params, question)
     @body = params[:body]
 
     @result = question.answers

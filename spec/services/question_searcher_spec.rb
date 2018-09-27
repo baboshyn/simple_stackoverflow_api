@@ -1,4 +1,5 @@
 require 'rails_helper'
+
 RSpec.describe QuestionSearcher do
   let(:result_all) {double}
 
